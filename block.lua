@@ -54,6 +54,9 @@ function b:draw(x,y)
     end
     
     lg.rectangle("fill",x+self.x,y+self.y,self.w,self.h)
+    
+    lg.setColor(color.debug)
+    self.cob:draw('line')
 
 end
 

@@ -77,6 +77,9 @@ function p:draw()
         lg.circle("line", self.ax, self.ay, (playerSize / 2)+3, 9)
         lg.circle("line", self.ax, self.ay, (playerSize / 2)+6, 9)
     end
+    
+    lg.setColor(color.debug)
+    self.cob:draw('fill')
 end
 
 function p:getNextMotion()

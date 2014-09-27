@@ -44,10 +44,12 @@ color = {}
 color.lane = {30,30,30}
 color.divider = {255,255,255}
 color.colliding = {60,60,60}
+color.debug = {60,255,60}
 color.block={}
 color.block[1] = {255,0,0}
 color.block[2] = {0,255,0}
 color.block[3] = {0,0,255}
+
 
 COLORS = {{255,0,0},
           {0,255,0},
