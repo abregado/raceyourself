@@ -46,6 +46,7 @@ function p.setupMethods(o)
     o.getNextMotion = p.getNextMotion
     o.moveTo = p.moveTo
     o.moveBy = p.moveBy
+    o.delay = p.delay
 end
 
 function p:switchWithPlayer(other)
@@ -129,6 +130,10 @@ end
 
 function p:moveBy(dur, x, y)
     table.insert(self.motions, {dur=dur, deltaX=x, deltaY=y, elapsed=0.0})
+end
+
+function p:delay(dur)
+    table.insert(self.motions, {dur=dur, deltaX=0, deltaY=0, elapsed=0.0})
 end
 
 function p.swapLanes(from, to)
