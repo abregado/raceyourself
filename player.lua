@@ -1,13 +1,16 @@
 local p = {}
 
-function p.new(x,y,lane,color)
+function p.new(lane,color)
     o = {}
-    o.hx = x
+    
+    o.x=lane.x+(lane.w*percentPlayerX)
+    o.y=lane.y+(lane.h/2)
+    
+    o.ax = o.x
+    o.ay = o.y
+    
     o.isPlayer=true
-    o.hy = laneGFX.h/2
-    o.x = o.hx
     o.isActive = false
-    o.y = o.hy
     o.lane = lane
     o.color = color
     o.isPunching = false
@@ -16,13 +19,12 @@ function p.new(x,y,lane,color)
     o.timers.stunned = {val=0}
     o.timers.respawn = {val=0}
     
-    o.cob = shapes.newCircleShape(o.x,o.y,playerSize/2)
+    o.cob = level.collider:addCircle(o.ax,o.ay,playerSize/2)
     o.cob.parent = o
     
     p.setupMethods(o)
 
-    o.ax = o.x
-    o.ay = o.lane.y + o.y
+    
 
     o.motions = {}
     o.currentMotion = nil
@@ -50,8 +52,8 @@ end
 
 function p:switchWithPlayer(other)
     local newLane = other.lane
-    self.lane.collider:remove(self.cob)
-    other.lane.collider:remove(other.cob)
+    --self.lane.collider:remove(self.cob)
+    --other.lane.collider:remove(other.cob)
     other:setLane(self.lane)
     self:setLane(newLane)
     self:moveTo(0.5, other.ax, other.ay)
@@ -71,15 +73,14 @@ function p:draw()
         lg.setColor(COLORS[self.color])
     end
     
-    lg.circle("fill", self.ax, self.ay, playerSize / 2, 9)
+    --lg.circle("fill", self.ax, self.ay, playerSize / 2, 9)
+    self.cob:draw('fill')
     
     if self.isPunching then
         lg.circle("line", self.ax, self.ay, (playerSize / 2)+3, 9)
         lg.circle("line", self.ax, self.ay, (playerSize / 2)+6, 9)
     end
-    
-    lg.setColor(color.debug)
-    self.cob:draw('fill')
+
 end
 
 function p:getNextMotion()
@@ -122,7 +123,7 @@ function p:update(dt)
         self.isPunching = false
     end
     
-    self.cob:moveTo(self.x,self.y)
+    self.cob:moveTo(self.ax,self.ay)
     
 end
 
@@ -144,8 +145,8 @@ end
 function p:punch()
     if self.timers.stunned.val == 0 then
         self.isPunching=true
-        self.timers.punch.val = 0.2
-        self.timers.stunned.val = 1
+        self.timers.punch.val = PUNCH_TIME
+        self.timers.stunned.val = STUN_TIME
     end
 end
 

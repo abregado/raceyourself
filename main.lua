@@ -6,8 +6,13 @@ function love.load()
 end
 
 function love.draw()
+    lg.reset()
     for i,v in ipairs(level.lanes) do
-        v:draw(0,(i-1)*laneGFX.h)
+        v:draw()
+    end
+    
+    for i,v in ipairs(level.lanes) do
+        v:drawBlocks()
     end
     
     for i,v in ipairs(level.players) do
@@ -28,6 +33,8 @@ function love.update(dt)
         v:update(dt)
     end
 
+    level.collider:update(dt)
+
 end
 
 function level.buildLanes()
@@ -36,10 +43,35 @@ function level.buildLanes()
     end
     
     for i,v in ipairs(level.lanes) do
-        table.insert(level.players,player.new(percentPlayerX*lw.getWidth(),(i-1)*laneGFX.h,v,i))
+        table.insert(level.players,player.new(v,i))
         level.activePlayer = level.players[playerLane]
     end
     
+end
+
+function level.collide(dt, s1, s2, dx, dy)
+    local p
+    local b
+    if s1.parent.isPlayer == true then
+        p = s1.parent
+        b = s2.parent
+    else
+        p = s2.parent
+        b = s1.parent
+    end
+
+    if p.isPunching and p.color == b.color then
+        b:destroy()
+    else
+    --elseif not b.isPlayer then
+        p.isColliding = true
+        b.isColliding = true
+    end
+end
+
+function level.endCollide(dt, s1, s2, dx, dy)
+    s1.parent.isColliding = false
+    s2.parent.isColliding = false
 end
 
 -- equiv to onTouchBegan

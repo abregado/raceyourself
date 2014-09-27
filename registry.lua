@@ -16,6 +16,8 @@ lw = love.window
 
 LANES = 3
 BLOCK_SPEED = 300
+PUNCH_TIME = 1
+STUN_TIME = 2
 
 --player globals
 tapThreshold = 10
@@ -39,12 +41,15 @@ level={}
 level.lanes={}
 level.players={}
 level.activePlayer = nil
+level.collider = HC.new()
+level.collider:setCallbacks(level.collide,level.endCollide)
+    
 
 color = {}
 color.lane = {30,30,30}
 color.divider = {255,255,255}
 color.colliding = {60,60,60}
-color.debug = {60,255,60}
+color.debug = {255,255,255}
 color.block={}
 color.block[1] = {255,0,0}
 color.block[2] = {0,255,0}

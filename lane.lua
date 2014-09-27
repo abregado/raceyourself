@@ -2,13 +2,19 @@ local l = {}
 
 function l.new(pos)
     local o={}
+    o.x = 0
+    o.y = (pos-1)*laneGFX.h
+    
+    o.w = screen.w
+    o.h = laneGFX.h
+
     o.pos = pos
     o.blocks = {}
     o.player = nil
-    o.y = (o.pos-1)*laneGFX.h
     
-    o.collider = HC.new()
-    o.collider:setCallbacks(l.collide,l.endCollide)
+    
+    --o.collider = HC.new()
+    --o.collider:setCallbacks(l.collide,l.endCollide)
     
     l.setupMethods(o)
     
@@ -24,29 +30,32 @@ function l.setupMethods(o)
     o.spawnBlock = l.spawnBlock
     o.givePlayer = l.givePlayer
     o.withinBounds = l.withinBounds
+    o.drawBlocks = l.drawBlocks
     
     return o
 end 
 
-function l:draw(x,y)
+function l:draw()
 
     --draw lane background at location x,y (in case we need to repos the lanes
-    local w = screen.w
-    local h = laneGFX.h
     lg.setColor(color.lane)
-    lg.rectangle("fill",x,y,w,h)
+    lg.rectangle("fill",self.x,self.y,self.w,self.h)
     lg.setColor(color.divider)
-    lg.rectangle("line",x,y,w,h)
+    lg.rectangle("line",self.x,self.y,self.w,self.h)
     
+    
+end
+
+function l:drawBlocks()
     --draw all blocks in this lane
     for i,v in ipairs(self.blocks) do
-        v:draw(x,y)
+        v:draw()
     end
 end
 
 function l:givePlayer(player)
     self.player = player
-    self.collider:addShape(player.cob)
+    --self.collider:addShape(player.cob)
 end
 
 function l:update(dt)
@@ -64,7 +73,7 @@ function l:update(dt)
         self:spawnBlock()
     end
     
-    self.collider:update(dt)
+    --self.collider:update(dt)
     
     
 end
@@ -79,7 +88,7 @@ function l:removeBlocks(all)
     else        
         for i,v in ipairs(self.blocks) do
             if v.isGarbage then
-                self.collider:remove(v.cob)
+                level.collider:remove(v.cob)
                 table.remove(self.blocks,i)
             end
         end
@@ -96,30 +105,7 @@ function l:withinBounds(x,y)
     end
 end
 
-function l.collide(dt, s1, s2, dx, dy)
-    local p
-    local b
-    if s1.parent.isPlayer == true then
-        p = s1.parent
-        b = s2.parent
-    else
-        p = s2.parent
-        b = s1.parent
-    end
 
-    if p.isPunching and p.color == b.color then
-        b:destroy()
-    else
-    --elseif not b.isPlayer then
-        p.isColliding = true
-        b.isColliding = true
-    end
-end
-
-function l.endCollide(dt, s1, s2, dx, dy)
-    s1.parent.isColliding = false
-    s2.parent.isColliding = false
-end
 
 
 return l
