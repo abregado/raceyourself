@@ -16,10 +16,16 @@ function p.new(x,y,lane,color)
     o.timers.stunned = {val=0}
     o.timers.respawn = {val=0}
     
-    o.cob = o.lane.collider:addCircle(o.x,o.y,playerSize/2)
+    o.cob = shapes.newCircleShape(o.x,o.y,playerSize/2)
     o.cob.parent = o
     
     p.setupMethods(o)
+
+    o.ax = o.x
+    o.ay = o.lane.y + o.y
+
+    o.motions = {}
+    o.currentMotion = nil
     
     o.lane:givePlayer(o)
     
@@ -33,19 +39,77 @@ function p.setupMethods(o)
     o.draw = p.draw
     o.update = p.update
     o.punch = p.punch
+    o.setLane = p.setLane
+    o.switchWithPlayer = p.switchWithPlayer
+    o.draw = p.draw
+    o.update = p.update
+    o.getNextMotion = p.getNextMotion
+    o.moveTo = p.moveTo
+    o.moveBy = p.moveBy
 end
 
 function p:switchWithPlayer(other)
     local newLane = other.lane
+    self.lane.collider:remove(self.cob)
+    other.lane.collider:remove(other.cob)
     other:setLane(self.lane)
     self:setLane(newLane)
+    self:moveTo(0.5, other.ax, other.ay)
+    other:moveTo(0.5, self.ax, self.ay)
+end
+
+function p:setLane(l)
+    self.lane = l
+    self.lane:givePlayer(self)
+end
+
+function p:draw()
+ 
+    if self.isColliding then
+        lg.setColor(color.colliding)
+    else
+        lg.setColor(COLORS[self.color])
+    end
+    
+    lg.circle("fill", self.ax, self.ay, playerSize / 2, 9)
+    
+    if self.isPunching then
+        lg.circle("line", self.ax, self.ay, (playerSize / 2)+3, 9)
+        lg.circle("line", self.ax, self.ay, (playerSize / 2)+6, 9)
+    end
+end
+
+function p:getNextMotion()
+    self.currentMotion = table.remove(self.motions, 1)
+    if self.currentMotion then
+        self.currentMotion.deltaX = self.currentMotion.deltaX or (self.currentMotion.endX - self.ax)
+        self.currentMotion.deltaY = self.currentMotion.deltaY or (self.currentMotion.endY - self.ay)
+        self.currentMotion.startX = self.ax
+        self.currentMotion.startY = self.ay
+    end
 end
 
 function p:update(dt)
-    self.cob:moveTo(self.x,self.y)
+    if self.currentMotion then
+        self.currentMotion.elapsed = self.currentMotion.elapsed + dt
 
+        local percent = self.currentMotion.elapsed / self.currentMotion.dur
+        if percent > 1 then
+            percent = 1
+        end
+
+        self.ax = percent * self.currentMotion.deltaX + self.currentMotion.startX
+        self.ay = percent * self.currentMotion.deltaY + self.currentMotion.startY
+        
+        if percent == 1 then
+            self:getNextMotion()
+        end
+    elseif self.motions then
+        self:getNextMotion()
+    end
+    
     for i,v in pairs(self.timers) do
-        if v.val > 0 then
+        if v.val>0 then
             v.val = v.val - dt
         end
         if v.val < 0 then v.val = 0 end
@@ -55,28 +119,16 @@ function p:update(dt)
         self.isPunching = false
     end
     
+    self.cob:moveTo(self.x,self.y)
+    
 end
 
-function p:setLane(l)
-    self.lane = l
-    self.lane:givePlayer(self)
+function p:moveTo(dur, x, y)
+    table.insert(self.motions, {dur=dur, endX=x, endY=y, elapsed=0.0})
 end
 
-function p:draw()
-    local ay = self.lane.y + self.y
-    
-    if self.isColliding then
-        lg.setColor(color.colliding)
-    else
-        lg.setColor(self.color)
-    end
-    
-    lg.circle("fill", self.x, ay, playerSize / 2, 9)
-    
-    if self.isPunching then
-        lg.circle("line", self.x, ay, (playerSize / 2)+3, 9)
-        lg.circle("line", self.x, ay, (playerSize / 2)+6, 9)
-    end
+function p:moveBy(dur, x, y)
+    table.insert(self.motions, {dur=dur, deltaX=x, deltaY=y, elapsed=0.0})
 end
 
 function p.swapLanes(from, to)

@@ -6,12 +6,12 @@ function b.new(lane)
     o.x=laneGFX.w
     o.y= laneGFX.h/3
     o.isGarbage = false
-    o.w = laneGFX.h/3
+    o.w = laneGFX.h/9
     o.h = laneGFX.h/3
     o.lane = lane
     
     o.boxType = math.floor(math.random(1,3))
-    o.boxColor = math.floor(math.random(1,3))
+    o.color = math.floor(math.random(1,LANES))
     
     if o.boxType == 1 then
         o.y=0
@@ -50,7 +50,7 @@ function b:draw(x,y)
     if self.isColliding then
         lg.setColor(color.colliding)
     else
-        lg.setColor(color.block[self.boxColor])
+        lg.setColor(COLORS[self.color])
     end
     
     lg.rectangle("fill",x+self.x,y+self.y,self.w,self.h)

@@ -27,7 +27,7 @@ function love.update(dt)
     for i,v in ipairs(level.players) do
         v:update(dt)
     end
-    
+
 end
 
 function level.buildLanes()
@@ -36,7 +36,7 @@ function level.buildLanes()
     end
     
     for i,v in ipairs(level.lanes) do
-        table.insert(level.players,player.new(percentPlayerX*lw.getWidth(),(i-1)*laneGFX.h,v,COLORS[i]))
+        table.insert(level.players,player.new(percentPlayerX*lw.getWidth(),(i-1)*laneGFX.h,v,i))
         level.activePlayer = level.players[playerLane]
     end
     

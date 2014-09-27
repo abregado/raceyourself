@@ -6,6 +6,7 @@ player = require('player')
 HC = require('HardonCollider')
 camera = require ('hump-master/camera')
 vl = require ('hump-master/vector-light')
+shapes = require ('HardonCollider.shapes')
 
 
 --global declarations
@@ -13,18 +14,18 @@ lg = love.graphics
 lm = love.mouse
 lw = love.window
 
-LANES = 5
+LANES = 3
 BLOCK_SPEED = 300
 
 --player globals
 tapThreshold = 10
 touchMoved = false
 
-horizSwipeRatio = 10
-vertSwipeRatio = 10
+horizSwipeRatio = 1.5
+vertSwipeRatio = 1.5
 
 percentPlayerX = 0.1
-playerSize = lw.getHeight() / (LANES * 3)
+playerSize = 0.3 * lw.getHeight() / (LANES * 3)
 
 playerLane = math.ceil(LANES / 2)
 

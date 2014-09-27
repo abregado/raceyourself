@@ -13,6 +13,7 @@ function l.new(pos)
     l.setupMethods(o)
     
     return o
+
 end
 
 function l.setupMethods(o)
@@ -45,6 +46,7 @@ end
 
 function l:givePlayer(player)
     self.player = player
+    self.collider:addShape(player.cob)
 end
 
 function l:update(dt)
@@ -105,9 +107,10 @@ function l.collide(dt, s1, s2, dx, dy)
         b = s1.parent
     end
 
-    if p.isPunching then
+    if p.isPunching and p.color == b.color then
         b:destroy()
     else
+    --elseif not b.isPlayer then
         p.isColliding = true
         b.isColliding = true
     end
