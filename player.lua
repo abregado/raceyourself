@@ -45,7 +45,6 @@ function p.setupMethods(o)
     o.update = p.update
     o.punch = p.punch
     o.setLane = p.setLane
-    o.switchWithPlayer = p.switchWithPlayer
     o.draw = p.draw
     o.update = p.update
     o.getNextMotion = p.getNextMotion
@@ -62,8 +61,8 @@ function p:switchWithPlayer(other)
     --other.lane.collider:remove(other.cob)
     other:setLane(self.lane)
     self:setLane(newLane)
-    self:moveTo(LANE_SWAP_DUR, other.ax, other.ay, tween.easing.outCubic)
-    other:moveTo(LANE_SWAP_DUR, self.ax, self.ay, tween.easing.outCubic)
+    self:moveTo(LANE_SWAP_DUR, self.ax, self.lane.y + self.lane.h / 2, tween.easing.outCubic)
+    other:moveTo(LANE_SWAP_DUR, other.ax, other.lane.y + other.lane.h / 2, tween.easing.outCubic)
 end
 
 function p:setLane(l)
@@ -86,9 +85,23 @@ function p:draw()
             lg.circle("line", self.ax, self.ay, (playerSize / 2)+3, 9)
             lg.circle("line", self.ax, self.ay, (playerSize / 2)+6, 9)
         end
-    elseif self.timers.deactive.val < 1 then
+        
+        if self.isControlled then
+            lg.setColor(color.controlled)
+            lg.circle("fill", self.ax, self.ay, (playerSize / 4), 9)
+        end
+    elseif self.timers.deactive.val < 2 then
         lg.setColor(COLORS[self.color][1],COLORS[self.color][2],COLORS[self.color][3],125)
         lg.circle("line", self.ax, self.ay, (playerSize / 2)+6, 9)
+        if self.isControlled then
+            lg.setColor(color.controlled)
+            lg.circle("fill", self.ax, self.ay, (playerSize / 4), 9)
+        end
+    end
+    
+    if self.isControlled then
+        lg.setColor(color.controlled)
+        lg.circle("fill", self.ax, self.ay, (playerSize / 4), 9)
     end
 end
 
@@ -103,6 +116,8 @@ function p:getNextMotion()
                                        {x=nextMotion.startX, y=nextMotion.startY}, 
                                        {x=nextMotion.endX, y=nextMotion.endY},
                                        nextMotion.tween or tween.easing.linear)
+    else
+        self.currentMotion = nil
     end
 end
 

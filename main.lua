@@ -90,6 +90,10 @@ function love.mousepressed(x, y, button)
 end
 
 function level.selectNewPlayer(override)
+    for i,v in ipairs(level.players) do
+        v.isControlled=false
+    end
+    
     if override and level.players[override] then
         level.activePlayer = level.players[override]
         level.activePlayer.isControlled = true

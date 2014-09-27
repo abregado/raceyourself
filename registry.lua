@@ -17,13 +17,16 @@ lw = love.window
 
 LANES = 3
 BLOCK_SPEED = 300
-PUNCH_TIME = 1
-STUN_TIME = 2
+
 DEATH_TIME = 5
+PUNCH_TIME = 0.5
+STUN_TIME = 1.5
+
+PUNCH_DIST = 0.175
 
 JUMP_HALF_DUR = 0.3
 JUMP_DELAY_DUR = 0.1
-LANE_SWAP_DUR = 0.5
+LANE_SWAP_DUR = 0.2
 
 --player globals
 tapThreshold = 10
@@ -55,6 +58,7 @@ color.lane = {30,30,30}
 color.divider = {255,255,255}
 color.colliding = {60,60,60}
 color.debug = {255,255,255}
+color.controlled = {255,255,255}
 color.block={}
 color.block[1] = {255,0,0}
 color.block[2] = {0,255,0}
