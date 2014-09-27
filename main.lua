@@ -45,7 +45,7 @@ function level.buildLanes()
     
     for i,v in ipairs(level.lanes) do
         table.insert(level.players,player.new(v,i))
-        level.activePlayer = level.players[playerLane]
+        level.selectNewPlayer(2)
     end
     
 end
@@ -68,8 +68,9 @@ function level.collide(dt, s1, s2, dx, dy)
     if p.isPunching and p.color == b.color then
         b:destroy()
     else
-        p.isColliding = true
-        b.isColliding = true
+        p:deactivate()
+        --p.isColliding = true
+        --b.isColliding = true
     end
     
     tc.line = "Collision"
@@ -86,6 +87,33 @@ function love.mousepressed(x, y, button)
     origTouchX = x
     origTouchY = y
     touchButton = button
+end
+
+function level.selectNewPlayer(override)
+    if override and level.players[override] then
+        level.activePlayer = level.players[override]
+        level.activePlayer.isControlled = true
+    else
+        local newPlayer = nil
+        local deathtime = 99999
+        for i,v in ipairs(level.players) do
+            if v.isActive then
+                newPlayer = v
+            end
+        end
+        
+        if not newPlayer then
+            for i,v in ipairs(level.players) do
+                if v.timers.deactive.val < deathtime then
+                   deathtime = v.timers.deactive.val
+                   newPlayer = v
+                end
+            end
+        end
+        
+        level.activePlayer = newPlayer
+        newPlayer.isControlled = true
+    end
 end
 
 -- equiv to onTouchEnded

@@ -11,6 +11,7 @@ function p.new(lane,color)
     
     o.isPlayer=true
     o.isActive = false
+    o.isControlled = false
     o.lane = lane
     o.color = color
     o.isPunching = false
@@ -18,9 +19,12 @@ function p.new(lane,color)
     o.timers.punch = {val=0}
     o.timers.stunned = {val=0}
     o.timers.respawn = {val=0}
+    o.timers.deactive = {val=0}
     
     o.cob = level.collider:addCircle(o.ax,o.ay,playerSize/2)
     o.cob.parent = o
+    --local c = {w=VIEWCONE.l,h=VIEWCONE.h}
+    --o.cone = level.collider:addRectangle(o.ax,o.ay)
     
     p.setupMethods(o)
 
@@ -29,8 +33,7 @@ function p.new(lane,color)
     o.motions = {}
     o.currentMotion = nil
     
-    o.lane:givePlayer(o)
-    
+    o.lane:givePlayer(o)    
     
     return o
 end
@@ -49,6 +52,8 @@ function p.setupMethods(o)
     o.moveTo = p.moveTo
     o.moveBy = p.moveBy
     o.delay = p.delay
+    o.deactivate = p.deactivate
+    o.activate = p.activate
 end
 
 function p:switchWithPlayer(other)
@@ -67,21 +72,24 @@ function p:setLane(l)
 end
 
 function p:draw()
- 
-    if self.isColliding then
-        lg.setColor(color.colliding)
-    else
-        lg.setColor(COLORS[self.color])
-    end
-    
-    --lg.circle("fill", self.ax, self.ay, playerSize / 2, 9)
-    self.cob:draw('fill')
-    
-    if self.isPunching then
-        lg.circle("line", self.ax, self.ay, (playerSize / 2)+3, 9)
+    if self.isActive then
+        if self.isColliding then
+            lg.setColor(color.colliding)
+        else
+            lg.setColor(COLORS[self.color])
+        end
+        
+        --lg.circle("fill", self.ax, self.ay, playerSize / 2, 9)
+        self.cob:draw('fill')
+        
+        if self.isPunching then
+            lg.circle("line", self.ax, self.ay, (playerSize / 2)+3, 9)
+            lg.circle("line", self.ax, self.ay, (playerSize / 2)+6, 9)
+        end
+    elseif self.timers.deactive.val < 1 then
+        lg.setColor(COLORS[self.color][1],COLORS[self.color][2],COLORS[self.color][3],125)
         lg.circle("line", self.ax, self.ay, (playerSize / 2)+6, 9)
     end
-
 end
 
 function p:getNextMotion()
@@ -123,6 +131,10 @@ function p:update(dt)
         self.isPunching = false
     end
     
+    if self.timers.deactive.val == 0 then
+        self:activate()
+    end
+    
     self.cob:moveTo(self.ax,self.ay)
     
 end
@@ -152,6 +164,32 @@ function p:punch()
         self.timers.punch.val = PUNCH_TIME
         self.timers.stunned.val = STUN_TIME
     end
+end
+
+function p:deactivate()
+    if self.isActive then
+        self.isActive=false
+        level.collider:setGhost(self.cob)
+        self.timers.deactive.val = DEATH_TIME
+        if level.activePlayer == self then
+            level.selectNewPlayer()
+        end
+    end
+end
+
+function p:activate()
+    if self.isActive == false then
+        self.isActive=true
+        level.collider:setSolid(self.cob)
+    end
+end
+
+function p:look()
+    
+end
+
+function p:react()
+
 end
 
 return p
