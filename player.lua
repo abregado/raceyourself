@@ -42,7 +42,6 @@ function p.setupMethods(o)
     o.update = p.update
     o.punch = p.punch
     o.setLane = p.setLane
-    o.switchWithPlayer = p.switchWithPlayer
     o.draw = p.draw
     o.update = p.update
     o.getNextMotion = p.getNextMotion
@@ -57,8 +56,8 @@ function p:switchWithPlayer(other)
     --other.lane.collider:remove(other.cob)
     other:setLane(self.lane)
     self:setLane(newLane)
-    self:moveTo(LANE_SWAP_DUR, other.ax, other.ay, tween.easing.outCubic)
-    other:moveTo(LANE_SWAP_DUR, self.ax, self.ay, tween.easing.outCubic)
+    self:moveTo(LANE_SWAP_DUR, self.ax, self.lane.y + self.lane.h / 2, tween.easing.outCubic)
+    other:moveTo(LANE_SWAP_DUR, other.ax, other.lane.y + other.lane.h / 2, tween.easing.outCubic)
 end
 
 function p:setLane(l)
@@ -95,6 +94,8 @@ function p:getNextMotion()
                                        {x=nextMotion.startX, y=nextMotion.startY}, 
                                        {x=nextMotion.endX, y=nextMotion.endY},
                                        nextMotion.tween or tween.easing.linear)
+    else
+        self.currentMotion = nil
     end
 end
 
