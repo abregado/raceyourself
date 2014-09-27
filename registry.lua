@@ -7,6 +7,7 @@ HC = require('HardonCollider')
 camera = require ('hump-master/camera')
 vl = require ('hump-master/vector-light')
 shapes = require ('HardonCollider.shapes')
+tween = require ('tween')
 
 
 --global declarations
@@ -18,6 +19,10 @@ LANES = 3
 BLOCK_SPEED = 300
 PUNCH_TIME = 1
 STUN_TIME = 2
+
+JUMP_HALF_DUR = 0.3
+JUMP_DELAY_DUR = 0.1
+LANE_SWAP_DUR = 0.5
 
 --player globals
 tapThreshold = 10
@@ -42,7 +47,6 @@ level.lanes={}
 level.players={}
 level.activePlayer = nil
 level.collider = HC.new()
-level.collider:setCallbacks(level.collide,level.endCollide)
     
 
 color = {}

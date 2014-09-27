@@ -31,12 +31,14 @@ end
 function tc.verticalSwipe(up)
     if up then
         tc.line = "Swipe: UP"
-        level.activePlayer:moveBy(0.3, 0, -laneGFX.h / 3)
-        level.activePlayer:moveBy(0.3, 0, laneGFX.h / 3)
+        level.activePlayer:moveBy(JUMP_HALF_DUR, 0, -laneGFX.h / 3, tween.easing.outCubic)
+        level.activePlayer:delay(JUMP_DELAY_DUR)
+        level.activePlayer:moveBy(JUMP_HALF_DUR, 0, laneGFX.h / 3, tween.easing.inCubic)
     else
         tc.line = "Swipe: DOWN"
-        level.activePlayer:moveBy(0.3, 0, laneGFX.h / 3)
-        level.activePlayer:moveBy(0.3, 0, -laneGFX.h / 3)
+        level.activePlayer:moveBy(JUMP_HALF_DUR, 0, laneGFX.h / 3, tween.easing.outCubic)
+        level.activePlayer:delay(JUMP_DELAY_DUR)
+        level.activePlayer:moveBy(JUMP_HALF_DUR, 0, -laneGFX.h / 3, tween.easing.inCubic)
     end
 end
 

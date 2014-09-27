@@ -3,6 +3,7 @@ require('registry')
 function love.load()
     level.buildLanes()
     tc.load()
+    level.collider:setCallbacks(level.collide,level.endCollide)
 end
 
 function love.draw()
@@ -52,6 +53,10 @@ end
 function level.collide(dt, s1, s2, dx, dy)
     local p
     local b
+    if s1.parent.isPlayer ==s2.parent.isPlayer then 
+        return
+    end
+    
     if s1.parent.isPlayer == true then
         p = s1.parent
         b = s2.parent
@@ -63,10 +68,11 @@ function level.collide(dt, s1, s2, dx, dy)
     if p.isPunching and p.color == b.color then
         b:destroy()
     else
-    --elseif not b.isPlayer then
         p.isColliding = true
         b.isColliding = true
     end
+    
+    tc.line = "Collision"
 end
 
 function level.endCollide(dt, s1, s2, dx, dy)

@@ -56,7 +56,9 @@ function b:move(dt)
 end
 
 function b:draw(x,y)
-    if self.isColliding then
+    if self.isGarbage then
+        lg.setColor(0,0,0)
+    elseif self.isColliding then
         lg.setColor(color.colliding)
     else
         lg.setColor(COLORS[self.color])
