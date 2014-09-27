@@ -55,8 +55,8 @@ function p:switchWithPlayer(other)
     other.lane.collider:remove(other.cob)
     other:setLane(self.lane)
     self:setLane(newLane)
-    self:moveTo(0.5, other.ax, other.ay)
-    other:moveTo(0.5, self.ax, self.ay)
+    self:moveTo(LANE_SWAP_DUR, other.ax, other.ay, tween.easing.outCubic)
+    other:moveTo(LANE_SWAP_DUR, self.ax, self.ay, tween.easing.outCubic)
 end
 
 function p:setLane(l)
@@ -84,28 +84,27 @@ function p:draw()
 end
 
 function p:getNextMotion()
-    self.currentMotion = table.remove(self.motions, 1)
-    if self.currentMotion then
-        self.currentMotion.deltaX = self.currentMotion.deltaX or (self.currentMotion.endX - self.ax)
-        self.currentMotion.deltaY = self.currentMotion.deltaY or (self.currentMotion.endY - self.ay)
-        self.currentMotion.startX = self.ax
-        self.currentMotion.startY = self.ay
+    local nextMotion = table.remove(self.motions, 1)
+    if nextMotion then
+        nextMotion.endX = nextMotion.endX or (nextMotion.deltaX + self.ax)
+        nextMotion.endY = nextMotion.endY or (nextMotion.deltaY + self.ay)
+        nextMotion.startX = self.ax
+        nextMotion.startY = self.ay
+        self.currentMotion = tween.new(nextMotion.dur, 
+                                       {x=nextMotion.startX, y=nextMotion.startY}, 
+                                       {x=nextMotion.endX, y=nextMotion.endY},
+                                       nextMotion.tween or tween.easing.linear)
     end
 end
 
 function p:update(dt)
     if self.currentMotion then
-        self.currentMotion.elapsed = self.currentMotion.elapsed + dt
+        local complete = self.currentMotion:update(dt)
 
-        local percent = self.currentMotion.elapsed / self.currentMotion.dur
-        if percent > 1 then
-            percent = 1
-        end
+        self.ax = self.currentMotion.subject.x
+        self.ay = self.currentMotion.subject.y
 
-        self.ax = percent * self.currentMotion.deltaX + self.currentMotion.startX
-        self.ay = percent * self.currentMotion.deltaY + self.currentMotion.startY
-        
-        if percent == 1 then
+        if complete then
             self:getNextMotion()
         end
     elseif self.motions then
@@ -127,12 +126,12 @@ function p:update(dt)
     
 end
 
-function p:moveTo(dur, x, y)
-    table.insert(self.motions, {dur=dur, endX=x, endY=y, elapsed=0.0})
+function p:moveTo(dur, x, y, tweenFunc)
+    table.insert(self.motions, {dur=dur, endX=x, endY=y, elapsed=0.0, tween=tweenFunc})
 end
 
-function p:moveBy(dur, x, y)
-    table.insert(self.motions, {dur=dur, deltaX=x, deltaY=y, elapsed=0.0})
+function p:moveBy(dur, x, y, tweenFunc)
+    table.insert(self.motions, {dur=dur, deltaX=x, deltaY=y, elapsed=0.0, tween=tweenFunc})
 end
 
 function p:delay(dur)
