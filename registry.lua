@@ -1,12 +1,28 @@
 --requires
 lane = require('lane')
 block = require('block')
+tc = require('touch')
+player = require('player')
 
 --global declarations
 lg = love.graphics
+lm = love.mouse
+lw = love.window
 
-LANES = 3
+LANES = 5
 BLOCK_SPEED = 300
+
+--player globals
+tapThreshold = 10
+touchMoved = false
+
+horizSwipeRatio = 10
+vertSwipeRatio = 10
+
+percentPlayerX = 0.1
+playerSize = lw.getHeight() / (LANES * 3)
+
+playerLane = math.ceil(LANES / 2)
 
 --graphics globals
 screen = {w=lg.getWidth(),h=lg.getHeight()}
@@ -16,6 +32,8 @@ gfx = {}
 
 level={}
 level.lanes={}
+level.players={}
+level.activePlayer = nil
 
 color = {}
 color.lane = {30,30,30}
@@ -24,3 +42,11 @@ color.block={}
 color.block[1] = {255,0,0}
 color.block[2] = {0,255,0}
 color.block[3] = {0,0,255}
+
+COLORS = {{255,0,0},
+          {0,255,0},
+          {0,0,255},
+          {255,255,0},
+          {0,255,255},
+          {255,0,255},
+          {255,255,255}}

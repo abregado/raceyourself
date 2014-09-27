@@ -1,10 +1,15 @@
 local l = {}
 
-function l.new()
+function l.new(pos)
     local o={}
+    o.pos = pos
     o.blocks = {}
+    o.player = nil
+    o.y = (o.pos-1)*laneGFX.h
+    
     table.insert(o.blocks,block.new())
     l.setupMethods(o)
+    
     return o
 end
 
@@ -14,6 +19,8 @@ function l.setupMethods(o)
     o.update = l.update
     o.removeBlocks = l.removeBlocks
     o.spawnBlock = l.spawnBlock
+    o.givePlayer = l.givePlayer
+    o.withinBounds = l.withinBounds
     
     return o
 end 
@@ -32,6 +39,10 @@ function l:draw(x,y)
     for i,v in ipairs(self.blocks) do
         v:draw(x,y)
     end
+end
+
+function l:givePlayer(player)
+    self.player = player
 end
 
 function l:update(dt)
@@ -65,5 +76,17 @@ function l:removeBlocks(all)
         end
     end
 end
+
+function l:withinBounds(x,y)
+    local oy = self.y
+    local my = self.y+laneGFX.h
+    if y >= oy and y < my then
+        return true
+    else
+        return false
+    end
+end
+
+
 
 return l
