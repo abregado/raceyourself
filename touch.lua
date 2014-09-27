@@ -35,14 +35,10 @@ function tc.verticalSwipe(up)
 
     if up then
         tc.line = "Swipe: UP"
-        level.activePlayer:moveBy(JUMP_HALF_DUR, 0, -laneGFX.h / 3, tween.easing.outCubic)
-        level.activePlayer:delay(JUMP_DELAY_DUR)
-        level.activePlayer:moveBy(JUMP_HALF_DUR, 0, laneGFX.h / 3, tween.easing.inCubic)
+        level.activePlayer:jumpUp()
     else
         tc.line = "Swipe: DOWN"
-        level.activePlayer:moveBy(JUMP_HALF_DUR, 0, laneGFX.h / 3, tween.easing.outCubic)
-        level.activePlayer:delay(JUMP_DELAY_DUR)
-        level.activePlayer:moveBy(JUMP_HALF_DUR, 0, -laneGFX.h / 3, tween.easing.inCubic)
+        level.activePlayer:jumpDown()
     end
 end
 
@@ -55,12 +51,7 @@ function tc.horizontalSwipe(right)
  
     if right then
         tc.line = "Swipe: RIGHT"
-        local lane = level.activePlayer.lane
-        local pixels = laneGFX.w * PUNCH_DIST
-        local returnDur = pixels / BLOCK_SPEED
         activePlayer:punch()
-        activePlayer:moveBy(PUNCH_TIME, pixels, 0, tween.easing.outExpo)
-        activePlayer:moveBy(returnDur, -pixels, 0)
     else
         tc.line = "Swipe: LEFT"
     end

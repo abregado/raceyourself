@@ -17,6 +17,7 @@ lw = love.window
 
 LANES = 3
 BLOCK_SPEED = 300
+AI_DELAYMAX = 67
 
 DEATH_TIME = 5
 PUNCH_TIME = 0.5
@@ -28,6 +29,11 @@ JUMP_HALF_DUR = 0.3
 JUMP_DELAY_DUR = 0.1
 LANE_SWAP_DUR = 0.2
 
+
+playerSize = 0.3 * lw.getHeight() / (LANES * 3)
+
+VIEWCONE = {w=playerSize*3,h=playerSize*2}
+
 --player globals
 tapThreshold = 10
 touchMoved = false
@@ -36,8 +42,6 @@ horizSwipeRatio = 1.5
 vertSwipeRatio = 1.5
 
 percentPlayerX = 0.1
-playerSize = 0.3 * lw.getHeight() / (LANES * 3)
-
 playerLane = math.ceil(LANES / 2)
 
 --graphics globals
