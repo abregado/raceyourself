@@ -47,13 +47,14 @@ function tc.verticalSwipe(up)
 end
 
 function tc.horizontalSwipe(right)
-    if level.activePlayer.currentMotion then
+    local activePlayer = level.activePlayer
+
+    if activePlayer.timers.stunned.val ~= 0 then
         return
     end
-
+ 
     if right then
         tc.line = "Swipe: RIGHT"
-        local activePlayer = level.activePlayer
         local lane = level.activePlayer.lane
         local pixels = laneGFX.w * PUNCH_DIST
         local returnDur = pixels / BLOCK_SPEED
@@ -66,7 +67,7 @@ function tc.horizontalSwipe(right)
 end
 
 function tc.tap(x, y)
-    if level.activePlayer.currentMotion then
+    if level.activePlayer.currentMotion ~= nil then
         return
     end
 

@@ -17,14 +17,14 @@ lw = love.window
 
 LANES = 3
 BLOCK_SPEED = 300
-PUNCH_TIME = 1
+PUNCH_TIME = 0.5
 STUN_TIME = 1.5
 
-PUNCH_DIST = 0.2
+PUNCH_DIST = 0.175
 
 JUMP_HALF_DUR = 0.3
 JUMP_DELAY_DUR = 0.1
-LANE_SWAP_DUR = 0.5
+LANE_SWAP_DUR = 0.2
 
 --player globals
 tapThreshold = 10
