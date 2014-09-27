@@ -32,6 +32,7 @@ function p.new(lane,color)
 
     o.motions = {}
     o.currentMotion = nil
+    o.priorityMotion = nil
     
     o.lane:givePlayer(o)    
     
@@ -61,8 +62,8 @@ function p:switchWithPlayer(other)
     --other.lane.collider:remove(other.cob)
     other:setLane(self.lane)
     self:setLane(newLane)
-    self:moveTo(LANE_SWAP_DUR, self.ax, self.lane.y + self.lane.h / 2, tween.easing.outCubic)
-    other:moveTo(LANE_SWAP_DUR, other.ax, other.lane.y + other.lane.h / 2, tween.easing.outCubic)
+    self:moveBy(LANE_SWAP_DUR, 0, (self.lane.pos - other.lane.pos) * self.lane.h, tween.easing.outCubic, false)
+    other:moveBy(LANE_SWAP_DUR, 0, (other.lane.pos - self.lane.pos) * self.lane.h, tween.easing.outCubic, false)
 end
 
 function p:setLane(l)
@@ -122,16 +123,32 @@ function p:getNextMotion()
 end
 
 function p:update(dt)
-    if self.currentMotion then
-        local complete = self.currentMotion:update(dt)
+    local priorityEnd = nil
+    local currentEnd = nil
 
+    if self.currentMotion then
+        currentEnd = self.currentMotion:update(dt)
         self.ax = self.currentMotion.subject.x
         self.ay = self.currentMotion.subject.y
+    end
 
-        if complete then
-            self:getNextMotion()
-        end
-    elseif self.motions then
+    if self.priorityMotion then
+        priorityEnd = self.priorityMotion:update(dt)
+        self.ax = self.ax + self.priorityMotion.subject.x - self.priorityMotion.lastX
+        self.ay = self.ay + self.priorityMotion.subject.y - self.priorityMotion.lastY
+        self.priorityMotion.lastX = self.priorityMotion.subject.x
+        self.priorityMotion.lastY = self.priorityMotion.subject.y
+    end
+
+    if currentEnd then
+        self.currentMotion = nil
+    end
+
+    if priorityEnd then
+        self.priorityMotion = nil
+    end
+
+    if self.motions and not self.currentMotion then
         self:getNextMotion()
     end
     
@@ -155,11 +172,20 @@ function p:update(dt)
 end
 
 function p:moveTo(dur, x, y, tweenFunc)
-    table.insert(self.motions, {dur=dur, endX=x, endY=y, elapsed=0.0, tween=tweenFunc})
+        table.insert(self.motions, {dur=dur, endX=x, endY=y, elapsed=0.0, tween=tweenFunc})
 end
 
-function p:moveBy(dur, x, y, tweenFunc)
-    table.insert(self.motions, {dur=dur, deltaX=x, deltaY=y, elapsed=0.0, tween=tweenFunc})
+function p:moveBy(dur, x, y, tweenFunc, now)
+    if now and (next(self.motions) or self.currentMotion) then
+        self.priorityMotion = tween.new(dur, 
+                                        {x=0.0, y=0.0}, 
+                                        {x=x, y=y},
+                                        tweenFunc or tween.easing.linear)
+        self.priorityMotion.lastX = 0.0
+        self.priorityMotion.lastY = 0.0
+    else
+        table.insert(self.motions, {dur=dur, deltaX=x, deltaY=y, elapsed=0.0, tween=tweenFunc})
+    end
 end
 
 function p:delay(dur)
