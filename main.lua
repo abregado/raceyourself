@@ -51,29 +51,39 @@ function level.buildLanes()
 end
 
 function level.collide(dt, s1, s2, dx, dy)
-    local p
-    local b
-    if s1.parent.isPlayer ==s2.parent.isPlayer then 
-        return
-    end
-    
-    if s1.parent.isPlayer == true then
-        p = s1.parent
-        b = s2.parent
+    if s1.isCone and not s2.parent.isPlayer then
+        s1.parent:look(s2)
+    elseif s2.isCone and not s1.parent.isPlayer then
+        s2.parent:look(s1)
     else
-        p = s2.parent
-        b = s1.parent
-    end
+        local p
+        local b
+        if s1.parent.isPlayer ==s2.parent.isPlayer then 
+            return false
+        end
+        
+        if s1.parent.isPlayer == true then
+            p = s1.parent
+            b = s2.parent
+        else
+            p = s2.parent
+            b = s1.parent
+        end
 
-    if p.isPunching and p.color == b.color then
-        b:destroy()
-    else
-        p:deactivate()
-        --p.isColliding = true
-        --b.isColliding = true
+        if p.isPunching and p.color == b.color then
+            b:destroy()
+        else
+            p:deactivate()
+            --p.isColliding = true
+            --b.isColliding = true
+        end
+        
+        tc.line = "Collision"
+    
+    
     end
     
-    tc.line = "Collision"
+    
 end
 
 function level.endCollide(dt, s1, s2, dx, dy)

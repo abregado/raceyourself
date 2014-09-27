@@ -23,8 +23,13 @@ function p.new(lane,color)
     
     o.cob = level.collider:addCircle(o.ax,o.ay,playerSize/2)
     o.cob.parent = o
-    --local c = {w=VIEWCONE.l,h=VIEWCONE.h}
-    --o.cone = level.collider:addRectangle(o.ax,o.ay)
+    local c = VIEWCONE
+    o.cone = level.collider:addPolygon(o.ax,o.ay,o.ax+c.w,o.ay+(c.h/2),o.ax+c.w,o.ay-(c.h/2))
+    o.cone.isCone = true
+    o.cone.parent = o
+    local x1,y1,x2,y2 = o.cone:bbox()
+    local x3,y3 = o.cone:center()
+    o.cone.ox = x1-x3
     
     p.setupMethods(o)
 
@@ -53,6 +58,11 @@ function p.setupMethods(o)
     o.delay = p.delay
     o.deactivate = p.deactivate
     o.activate = p.activate
+    o.drawCon = p.drawCon
+    o.look=p.look
+    o.react=p.react
+    o.jumpUp = p.jumpUp
+    o.jumpDown = p.jumpDown
 end
 
 function p:switchWithPlayer(other)
@@ -86,24 +96,27 @@ function p:draw()
             lg.circle("line", self.ax, self.ay, (playerSize / 2)+6, 9)
         end
         
-        if self.isControlled then
-            lg.setColor(color.controlled)
-            lg.circle("fill", self.ax, self.ay, (playerSize / 4), 9)
-        end
-    elseif self.timers.deactive.val < 2 then
+        self:drawCon()
+        
+    elseif self.timers.deactive.val < 2 and self.isControlled then
         lg.setColor(COLORS[self.color][1],COLORS[self.color][2],COLORS[self.color][3],125)
         lg.circle("line", self.ax, self.ay, (playerSize / 2)+6, 9)
-        if self.isControlled then
-            lg.setColor(color.controlled)
-            lg.circle("fill", self.ax, self.ay, (playerSize / 4), 9)
-        end
+        self:drawCon()
     end
     
+
+end
+
+function p:drawCon()
     if self.isControlled then
         lg.setColor(color.controlled)
         lg.circle("fill", self.ax, self.ay, (playerSize / 4), 9)
+    else
+        --lg.setColor(color.colliding)
+        --self.cone:draw('fill')
     end
 end
+
 
 function p:getNextMotion()
     local nextMotion = table.remove(self.motions, 1)
@@ -151,6 +164,7 @@ function p:update(dt)
     end
     
     self.cob:moveTo(self.ax,self.ay)
+    self.cone:moveTo(self.ax-self.cone.ox,self.ay)
     
 end
 
@@ -175,9 +189,13 @@ end
 
 function p:punch()
     if self.timers.stunned.val == 0 then
+        local pixels = laneGFX.w * PUNCH_DIST
+        local returnDur = pixels / BLOCK_SPEED
         self.isPunching=true
         self.timers.punch.val = PUNCH_TIME
         self.timers.stunned.val = STUN_TIME
+        self:moveBy(PUNCH_TIME, pixels, 0, tween.easing.outExpo)
+        self:moveBy(returnDur, -pixels, 0)
     end
 end
 
@@ -199,12 +217,57 @@ function p:activate()
     end
 end
 
-function p:look()
-    
+function p:look(shape)
+    if self.isControlled == false then
+        local options = {}
+        if shape.parent.boxType == 1 then
+            table.insert(options,"DOWN")
+        elseif shape.parent.boxType == 2 then
+            table.insert(options,"DOWN")
+            table.insert(options,"UP")
+        elseif shape.parent.boxType == 3 then
+            table.insert(options,"UP")
+        end
+        if shape.parent.color == self.color then
+            table.insert(options,"PUNCH")
+        end
+        self:react(options)
+    end
 end
 
-function p:react()
+function p:react(options)
+   
+    if self.currentMotion == nil and #options>0 then
+        local delay = math.random(1,10)/10000*AI_DELAYMAX
+        local reaction = nil 
+        local rand = math.random(1,#options)
+        if options[rand] == "UP" then
+            self:delay(delay)
+            self:jumpUp()
+        elseif options[rand] == "DOWN" then
+            self:delay(delay)
+            self:jumpDown()
+        elseif options[rand] == "PUNCH" then
+            self:delay(delay)
+            self:punch()
+        end
+    end
+end
 
+function p:help()
+    tc.line = "help!"
+end
+
+function p:jumpDown()
+    self:moveBy(JUMP_HALF_DUR, 0, laneGFX.h / 3, tween.easing.outCubic)
+    self:delay(JUMP_DELAY_DUR)
+    self:moveBy(JUMP_HALF_DUR, 0, -laneGFX.h / 3, tween.easing.inCubic)
+end
+
+function p:jumpUp()
+    self:moveBy(JUMP_HALF_DUR, 0, -laneGFX.h / 3, tween.easing.outCubic)
+    self:delay(JUMP_DELAY_DUR)
+    self:moveBy(JUMP_HALF_DUR, 0, laneGFX.h / 3, tween.easing.inCubic)
 end
 
 return p
