@@ -10,7 +10,7 @@ function b.new()
     o.h = laneGFX.h/3
     
     o.boxType = math.floor(math.random(1,3))
-    o.boxColor = math.floor(math.random(1,3))
+    o.boxColor = math.floor(math.random(1,LANES))
     
     if o.boxType == 1 then
         o.y=0
@@ -39,7 +39,7 @@ function b:move(dt)
 end
 
 function b:draw(x,y)
-    lg.setColor(color.block[self.boxColor])
+    lg.setColor(COLORS[self.boxColor])
     
     lg.rectangle("fill",x+self.x,y+self.y,self.w,self.h)
 
