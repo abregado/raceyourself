@@ -3,6 +3,10 @@ lane = require('lane')
 block = require('block')
 tc = require('touch')
 player = require('player')
+HC = require('HardonCollider')
+camera = require ('hump-master/camera')
+vl = require ('hump-master/vector-light')
+
 
 --global declarations
 lg = love.graphics
@@ -38,6 +42,7 @@ level.activePlayer = nil
 color = {}
 color.lane = {30,30,30}
 color.divider = {255,255,255}
+color.colliding = {60,60,60}
 color.block={}
 color.block[1] = {255,0,0}
 color.block[2] = {0,255,0}

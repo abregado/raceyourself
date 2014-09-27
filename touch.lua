@@ -50,6 +50,7 @@ end
 function tc.horizontalSwipe(right)
     if right then
         tc.line = "Swipe: RIGHT"
+        level.activePlayer:punch()
     else
         tc.line = "Swipe: LEFT"
     end

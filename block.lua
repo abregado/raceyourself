@@ -1,6 +1,6 @@
 local b = {}
 
-function b.new()
+function b.new(lane)
     o={}
     
     o.x=laneGFX.w
@@ -8,6 +8,7 @@ function b.new()
     o.isGarbage = false
     o.w = laneGFX.h/3
     o.h = laneGFX.h/3
+    o.lane = lane
     
     o.boxType = math.floor(math.random(1,3))
     o.boxColor = math.floor(math.random(1,3))
@@ -20,6 +21,9 @@ function b.new()
         o.h=laneGFX.h/3*2
     end
     
+    o.cob = o.lane.collider:addRectangle(o.x,o.y,o.w,o.h)
+    o.cob.parent = o
+    
     b.setupMethods(o)
     return o
     
@@ -28,21 +32,33 @@ end
 function b.setupMethods(o)
     o.move = b.move
     o.draw = b.draw
+    o.destroy = b.destroy
 end
 
 function b:move(dt)
     self.x = self.x - (dt*BLOCK_SPEED)
+    self.cob:move(-1*dt*BLOCK_SPEED,0)
     
     if self.x+self.w < 0 then
-        self.isGarbage = true
+        self:destroy()
+        
     end
+    
 end
 
 function b:draw(x,y)
-    lg.setColor(color.block[self.boxColor])
+    if self.isColliding then
+        lg.setColor(color.colliding)
+    else
+        lg.setColor(color.block[self.boxColor])
+    end
     
     lg.rectangle("fill",x+self.x,y+self.y,self.w,self.h)
 
+end
+
+function b:destroy()
+    self.isGarbage=true
 end
 
 return b

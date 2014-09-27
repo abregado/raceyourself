@@ -7,7 +7,9 @@ function l.new(pos)
     o.player = nil
     o.y = (o.pos-1)*laneGFX.h
     
-    table.insert(o.blocks,block.new())
+    o.collider = HC.new()
+    o.collider:setCallbacks(l.collide,l.endCollide)
+    
     l.setupMethods(o)
     
     return o
@@ -59,10 +61,14 @@ function l:update(dt)
     if #self.blocks==0 then
         self:spawnBlock()
     end
+    
+    self.collider:update(dt)
+    
+    
 end
 
 function l:spawnBlock()
-    table.insert(self.blocks,block.new())
+    table.insert(self.blocks,block.new(self))
 end
 
 function l:removeBlocks(all)
@@ -71,6 +77,7 @@ function l:removeBlocks(all)
     else        
         for i,v in ipairs(self.blocks) do
             if v.isGarbage then
+                self.collider:remove(v.cob)
                 table.remove(self.blocks,i)
             end
         end
@@ -87,6 +94,29 @@ function l:withinBounds(x,y)
     end
 end
 
+function l.collide(dt, s1, s2, dx, dy)
+    local p
+    local b
+    if s1.parent.isPlayer == true then
+        p = s1.parent
+        b = s2.parent
+    else
+        p = s2.parent
+        b = s1.parent
+    end
+
+    if p.isPunching then
+        b:destroy()
+    else
+        p.isColliding = true
+        b.isColliding = true
+    end
+end
+
+function l.endCollide(dt, s1, s2, dx, dy)
+    s1.parent.isColliding = false
+    s2.parent.isColliding = false
+end
 
 
 return l

@@ -23,6 +23,11 @@ function love.update(dt)
     for i,v in ipairs(level.lanes) do
         v:update(dt)
     end
+    
+    for i,v in ipairs(level.players) do
+        v:update(dt)
+    end
+    
 end
 
 function level.buildLanes()
@@ -61,7 +66,7 @@ function love.mousereleased(x, y, button)
                 tc.verticalSwipe(dy < 0)
             elseif math.abs(dx) > horizSwipeRatio * math.abs(dy) then
                 -- horizontal swipe detected
-                tc.horizontalSwipe(dx < 0)
+                tc.horizontalSwipe(dx > 0)
             else
                 -- not vertical nor horizontal
                 tc.line = "unsupported swipe"
