@@ -6,7 +6,7 @@ block = require('block')
 lg = love.graphics
 
 LANES = 3
-BLOCK_SPEED = 10
+BLOCK_SPEED = 300
 
 --graphics globals
 screen = {w=lg.getWidth(),h=lg.getHeight()}
