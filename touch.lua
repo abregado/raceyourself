@@ -5,21 +5,10 @@ function tc.load()
     
     local x = percentPlayerX * lw.getWidth()
     local y = lw.getHeight() / 2 - lw.getHeight() *math.floor(LANES/2)/LANES
-
-    --[[for i=1,LANES do
-        player[i] = {x=x, y=y}
-        y = y + lw.getHeight() / LANES
-    end]]
 end
 
 
 function tc.draw()
-    --[[for i=1,LANES do
-        lg.setColor(COLORS[i])
-        lg.circle("fill", level.players[i].x, level.players[i].y, playerSize / 2, 9)
-        lg.setColor(0,0,0)
-        lg.print(i,level.players[i].x, level.players[i].y)
-    end]]
     lg.setColor(COLORS[#COLORS])
     lg.print(tc.line, 400, 300)
 end
@@ -42,8 +31,12 @@ end
 function tc.verticalSwipe(up)
     if up then
         tc.line = "Swipe: UP"
+        level.activePlayer:moveBy(0.3, 0, -laneGFX.h / 3)
+        level.activePlayer:moveBy(0.3, 0, laneGFX.h / 3)
     else
         tc.line = "Swipe: DOWN"
+        level.activePlayer:moveBy(0.3, 0, laneGFX.h / 3)
+        level.activePlayer:moveBy(0.3, 0, -laneGFX.h / 3)
     end
 end
 
@@ -65,13 +58,6 @@ function tc.tap(x, y)
             break
         end
     end
-
-    --[[for i=1,LANES-1 do
-        if y < lw.getHeight() * i / LANES then
-            tappedLane = i
-            break
-        end        
-    end]]
 
     tc.line = "tap @ (" .. x .. ", " .. y .. ") in lane" .. tappedLane.pos .. " from " .. level.activePlayer.lane.pos
     if tappedLane then

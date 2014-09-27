@@ -23,6 +23,10 @@ function love.update(dt)
     for i,v in ipairs(level.lanes) do
         v:update(dt)
     end
+    
+    for i,v in ipairs(level.players) do
+        v:update(dt)
+    end
 end
 
 function level.buildLanes()
