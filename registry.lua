@@ -20,7 +20,6 @@ lw = love.window
 DEBUG_MODE = true
 
 LANES = 3
-BLOCK_SPEED = 300
 AI_DELAYMAX = 67
 
 DEATH_TIME = 5
@@ -60,6 +59,8 @@ cont.quit = "escape"
 --graphics globals
 screen = {w=lg.getWidth(),h=lg.getHeight()}
 laneGFX = {w=screen.w,h=screen.h/LANES}
+
+BLOCK_SPEED = laneGFX.w / 3
 
 gfx = {}
 
