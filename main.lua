@@ -8,6 +8,9 @@ function love.load()
     level.collider:setCallbacks(level.collide,level.endCollide)
     score = scoring.new()
     sfx.theme[currentTheme]:play()
+    baseCalm = 3
+    calmBeforeStorm = baseCalm
+    stormFactor = 0
 end
 
 function buildAnimations()
@@ -76,6 +79,15 @@ function love.update(dt)
             table.remove(level.effects, i)
         end
     end
+
+    if calmBeforeStorm > 0 then
+        calmBeforeStorm = calmBeforeStorm - dt
+    else
+        stormFactor = stormFactor + 1
+        calmBeforeStorm = baseCalm + stormFactor
+    end
+
+    BLOCK_SPEED = BLOCK_SPEED + stormFactor * dt
 
     updateAnims(dt)
 
