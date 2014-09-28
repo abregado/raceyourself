@@ -1,7 +1,7 @@
 local tc = {}
 
 function tc.load()
-    tc.line = "Hello World"
+    tc.line = "Starship Troopers"
     
     local x = percentPlayerX * lw.getWidth()
     local y = lw.getHeight() / 2 - lw.getHeight() *math.floor(LANES/2)/LANES
@@ -9,8 +9,10 @@ end
 
 
 function tc.draw()
-    lg.setColor(COLORS[#COLORS])
-    lg.print(tc.line, 400, 300)
+    if DEBUG_MODE then
+        lg.setColor(COLORS[#COLORS])
+        lg.print(tc.line, 400, 300)
+    end
 end
 
 function tc.update(dt)

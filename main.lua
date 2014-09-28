@@ -40,6 +40,8 @@ function love.draw()
     for i,v in ipairs(level.effects) do
         lg.draw(v, 0, 0)
     end
+
+    score:draw()
 end
 
 function updateAnims(dt)
@@ -120,6 +122,7 @@ function level.collide(dt, s1, s2, dx, dy)
             fx:start()
             table.insert(level.effects, fx)
             b:destroy()
+            score:incrementKills()
         else
             if b.isPowerup then
                 sfx.powerup:play()

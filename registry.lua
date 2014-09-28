@@ -137,3 +137,8 @@ sfx.theme[2] = la.newSource("assets/music/theme2.mp3")
 sfx.theme[3] = la.newSource("assets/music/theme3.mp3")
 
 currentTheme = 2
+
+
+-- HUD
+
+edgeBuffer = lw.getHeight() * 0.02
