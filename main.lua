@@ -4,6 +4,7 @@ function love.load()
     buildAnimations()
     level.buildLanes()
     tc.load()
+    ps.load()
     level.collider:setCallbacks(level.collide,level.endCollide)
     score = scoring.new()
     sfx.theme[currentTheme]:play()
@@ -34,6 +35,11 @@ function love.draw()
     end
     
     tc.draw()
+    lg.setBlendMode("additive")
+
+    for i,v in ipairs(level.effects) do
+        lg.draw(v, 0, 0)
+    end
 end
 
 function updateAnims(dt)
@@ -61,6 +67,13 @@ function love.update(dt)
     end
 
     level.collider:update(dt)
+
+    for i,v in pairs(level.effects) do
+        v:update(dt)
+        if v:getCount() == 0 then
+            table.remove(level.effects, i)
+        end
+    end
 
     updateAnims(dt)
 
@@ -100,6 +113,12 @@ function level.collide(dt, s1, s2, dx, dy)
 
         if p.isPunching and p.color == b.color then
             sfx.punch:play()
+            local fx = ps.systems.explosion:clone()
+            local c = COLORS[p.color]
+            fx:setColors(c[1], c[2], c[3], 255, c[1], c[2], c[3], 0)
+            fx:setPosition(p.ax, p.ay)
+            fx:start()
+            table.insert(level.effects, fx)
             b:destroy()
         else
             if b.isPowerup then
@@ -108,6 +127,12 @@ function level.collide(dt, s1, s2, dx, dy)
                 score:collectPowerup()
             else
                 sfx.explosion:play()
+                local fx = ps.systems.explosion:clone()
+                local c = COLORS[p.color]
+                fx:setColors(c[1], c[2], c[3], 255, c[1], c[2], c[3], 0)
+                fx:setPosition(p.ax, p.ay)
+                fx:start()
+                table.insert(level.effects, fx)
                 p:deactivate()
                 tc.line = "Collision"
             end
