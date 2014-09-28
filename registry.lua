@@ -8,12 +8,15 @@ camera = require ('hump-master/camera')
 vl = require ('hump-master/vector-light')
 shapes = require ('HardonCollider.shapes')
 tween = require ('tween')
+an = require ('anim8/anim8')
 
 
 --global declarations
 lg = love.graphics
 lm = love.mouse
 lw = love.window
+
+DEBUG_MODE = false
 
 LANES = 3
 BLOCK_SPEED = 300
@@ -70,7 +73,9 @@ color = {}
 color.lane = {30,30,30}
 color.divider = {255,255,255}
 color.colliding = {60,60,60}
-color.debug = {255,255,255}
+color.debug = {255,255,0}
+color.respawn = {255,255,255,80}
+color.render = {255,255,255,255}
 color.controlled = {255,255,255}
 color.block={}
 color.block[1] = {255,0,0}
@@ -85,3 +90,15 @@ COLORS = {{255,0,0},
           {0,255,255},
           {255,0,255},
           {255,255,255}}
+          
+sheets = {}
+
+anims = {}
+          
+as = {}
+as.pShip={}
+as.pShip[1] = lg.newImage('assets/rship_sheet.png')
+as.pShip[2] = lg.newImage('assets/gship_sheet.png')
+as.pShip[3] = lg.newImage('assets/bship_sheet.png')
+
+
