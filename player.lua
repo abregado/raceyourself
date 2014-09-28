@@ -66,6 +66,7 @@ function p.setupMethods(o)
     o.jumpUp = p.jumpUp
     o.jumpDown = p.jumpDown
     o.drawSprite = p.drawSprite
+    o.drawPunch = p.drawPunch
 end
 
 function p:switchWithPlayer(other)
@@ -92,8 +93,9 @@ function p:draw()
         end
                
         if self.isPunching then
-            lg.circle("line", self.ax, self.ay, (playerSize / 2)+3, 9)
-            lg.circle("line", self.ax, self.ay, (playerSize / 2)+6, 9)
+            --lg.circle("line", self.ax, self.ay, (playerSize / 2)+3, 9)
+            --lg.circle("line", self.ax, self.ay, (playerSize / 2)+6, 9)
+            self:drawPunch()
         end
         
         self:drawSprite()
@@ -130,13 +132,23 @@ function p:drawSprite(trans)
     
     local gw = as.pShip[self.color]:getHeight()
     local gh = as.pShip[self.color]:getHeight()
-    local sx = playerSize/gw*3
-    local sy = playerSize/gh*3
+    local sx = playerSize/gw*3.5
+    local sy = playerSize/gh*3.5
     local ox = gw/2*sx
     local oy = gh/2*sy
     anims.pShip[self.color]:draw(as.pShip[self.color],self.ax+ox,self.ay-oy,math.rad(90),sx,sy)
 end
 
+
+function p:drawPunch()
+    local gw = as.pBullet[self.color]:getHeight()
+    local gh = as.pBullet[self.color]:getHeight()
+    local sx = playerSize/gw*10
+    local sy = playerSize/gh*10
+    local ox = gw/2*sx
+    local oy = gh/2*sy
+    lg.draw(as.pBullet[self.color],self.ax+ox,self.ay-oy,math.rad(90),sx,sy)
+end
 
 function p:drawCon()
     if self.isControlled then

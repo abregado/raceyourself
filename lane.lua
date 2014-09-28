@@ -7,6 +7,10 @@ function l.new(pos)
     
     o.w = screen.w
     o.h = laneGFX.h
+    o.bgBlocks = {}
+    for i=0,4 do
+        table.insert(o.bgBlocks,{x=i*o.w/3,y=o.y})
+    end
 
     o.pos = pos
     o.blocks = {}
@@ -36,12 +40,32 @@ function l.setupMethods(o)
 end 
 
 function l:draw()
-
+    lg.setColor(255,255,255)
     --draw lane background at location x,y (in case we need to repos the lanes
-    lg.setColor(color.lane)
-    lg.rectangle("fill",self.x,self.y,self.w,self.h)
-    lg.setColor(color.divider)
-    lg.rectangle("line",self.x,self.y,self.w,self.h)
+    --lg.setColor(color.lane)
+    --lg.rectangle("fill",self.x,self.y,self.w,self.h)
+    --lg.setColor(color.divider)
+    --lg.rectangle("line",self.x,self.y,self.w,self.h)
+    
+    for i,v in ipairs(self.bgBlocks) do
+        local gw = as.laneBG:getHeight()
+        local gh = as.laneBG:getHeight()
+        local sx = self.w/gw/3
+        local sy = self.h/gh
+        lg.draw(as.laneBG,v.x,v.y,0,sx,sy)
+    end
+    
+    if self.player.isControlled then
+        local gw = as.laneOver:getHeight()
+        local gh = as.laneOver:getHeight()
+        local sx = self.w/gw/3
+        local sy = self.h/gh
+        lg.setColor(COLORS[self.player.color])
+        lg.setBlendMode('additive')
+        lg.draw(as.laneOver,self.x,self.y,0,sx,sy)
+        lg.setBlendMode('alpha')
+    end
+    
     
     
 end
@@ -73,7 +97,13 @@ function l:update(dt)
         self:spawnBlock()
     end
     
-    --self.collider:update(dt)
+    --scroll background
+    for i,v in ipairs(self.bgBlocks) do
+        v.x = v.x -(dt*BLOCK_SPEED*0.5)
+        if v.x< (self.w/-3) then
+            v.x = self.w/3*4
+        end
+    end
     
     
 end

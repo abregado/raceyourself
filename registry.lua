@@ -77,6 +77,7 @@ color.debug = {255,255,0}
 color.respawn = {255,255,255,80}
 color.render = {255,255,255,255}
 color.controlled = {255,255,255}
+color.contOverlay = {255,0,0}
 color.block={}
 color.block[1] = {255,0,0}
 color.block[2] = {0,255,0}
@@ -100,5 +101,11 @@ as.pShip={}
 as.pShip[1] = lg.newImage('assets/rship_sheet.png')
 as.pShip[2] = lg.newImage('assets/gship_sheet.png')
 as.pShip[3] = lg.newImage('assets/bship_sheet.png')
+as.pBullet={}
+as.pBullet[1] = lg.newImage('assets/rbullet.png')
+as.pBullet[2] = lg.newImage('assets/gbullet.png')
+as.pBullet[3] = lg.newImage('assets/bbullet.png')
+as.laneBG = lg.newImage('assets/bg_tile.png')
+as.laneOver = lg.newImage('assets/lane_overlay.png')
 
 
