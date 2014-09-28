@@ -67,7 +67,7 @@ function tc.horizontalSwipe(right)
 end
 
 function tc.tap(x, y)
-    if level.activePlayer.currentMotion ~= nil then
+    if level.activePlayer.priorityMotion ~= nil then
         return
     end
 
