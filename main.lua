@@ -1,9 +1,19 @@
 require('registry')
 
 function love.load()
+    buildAnimations()
     level.buildLanes()
     tc.load()
     level.collider:setCallbacks(level.collide,level.endCollide)
+end
+
+function buildAnimations()
+    anims.pShip = {}
+    for i,v in ipairs(as.pShip) do
+        local newSheet = an.newGrid(640,640,v:getWidth(),v:getHeight())
+        local newAnim = an.newAnimation(newSheet('1-5',1),0.3)
+        table.insert(anims.pShip,newAnim)
+    end
 end
 
 function love.draw()
@@ -23,6 +33,14 @@ function love.draw()
     tc.draw()
 end
 
+function updateAnims(dt)
+	for i,v in pairs(anims) do
+		for j,k in pairs(v) do
+            k:update(dt)
+        end
+	end
+end
+
 function love.update(dt)
     tc.update(dt)
     
@@ -35,6 +53,7 @@ function love.update(dt)
     end
 
     level.collider:update(dt)
+    updateAnims(dt)
 
 end
 
