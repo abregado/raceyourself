@@ -249,7 +249,7 @@ function p:activate()
 end
 
 function p:look(shape)
-    if self.isControlled == false then
+    if self.isControlled == false and self.isActive then
         local options = {}
         if shape.parent.boxType == 1 then
             table.insert(options,"DOWN")
