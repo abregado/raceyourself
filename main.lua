@@ -4,6 +4,7 @@ function love.load()
     level.buildLanes()
     tc.load()
     level.collider:setCallbacks(level.collide,level.endCollide)
+    score = scoring.new()
 end
 
 function love.draw()
@@ -14,6 +15,7 @@ function love.draw()
     
     for i,v in ipairs(level.lanes) do
         v:drawBlocks()
+        v:drawPowerups()
     end
     
     for i,v in ipairs(level.players) do
@@ -24,6 +26,9 @@ function love.draw()
 end
 
 function love.update(dt)
+    if DEBUG_MODE and love.keyboard.isDown('p') then
+        return
+    end
     tc.update(dt)
     
     for i,v in ipairs(level.lanes) do
@@ -73,13 +78,16 @@ function level.collide(dt, s1, s2, dx, dy)
         if p.isPunching and p.color == b.color then
             b:destroy()
         else
-            p:deactivate()
+            if b.isPowerup then
+                b:destroy()
+                score:collectPowerup()
+            else
+                p:deactivate()
+                tc.line = "Collision"
+            end
             --p.isColliding = true
             --b.isColliding = true
         end
-        
-        tc.line = "Collision"
-    
     
     end
     

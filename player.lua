@@ -20,7 +20,7 @@ function p.new(lane,color)
     o.timers.stunned = {val=0}
     o.timers.respawn = {val=0}
     o.timers.deactive = {val=0}
-    
+
     o.cob = level.collider:addCircle(o.ax,o.ay,playerSize/2)
     o.cob.parent = o
     local c = VIEWCONE
