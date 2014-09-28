@@ -32,13 +32,23 @@ function s:draw()
     lg.print(self.powerups, self.minX + (self.pWidth * 1.2 - pW) / 2, self.maxY - self.fontHeight * 1.2)
     lg.print(self.kLine, self.midX + self.kWidth * 0.1, self.minY + self.fontHeight * 0.2)
     lg.print(self.kills, self.midX + (self.kWidth * 1.2 - kW) / 2, self.maxY - self.fontHeight * 1.2)
+    
+    if love.system.getOS() == "Android" then
+        local xo = self.font:getWidth(ANDROID_INSTRUCTIONS)/2
+        local yo = self.font:getHeight(ANDROID_INSTRUCTIONS)+10
+        lg.print(ANDROID_INSTRUCTIONS,(screen.w/2)-xo,screen.h-yo)
+    else 
+        local xo = self.font:getWidth(DESKTOP_INSTRUCTIONS)/2
+        local yo = self.font:getHeight(DESKTOP_INSTRUCTIONS)+10
+        lg.print(DESKTOP_INSTRUCTIONS,(screen.w/2)-xo,screen.h-yo)
+    end
 end
 
 function s:reset()
     self.powerups = 0
     self.kills = 0
-    self.pLine = "POWERUPS:"
-    self.kLine = "KILLS:"
+    self.pLine = "SPACECOINS"
+    self.kLine = "SPACEKILLS"
     self.font = lg.newFont()
     self.pWidth = self.font:getWidth(self.pLine)
     self.kWidth = self.font:getWidth(self.kLine)

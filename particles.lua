@@ -5,6 +5,7 @@ function ps.load()
     local expPart = love.graphics.newImage("assets/particles/explosion_particle.png");
 
     ps.systems = {}
+    ps.systems.explosion = love.graphics.newParticleSystem(expPart, 20)
     ps.systems.explosion = love.graphics.newParticleSystem(expPart, 674)
     ps.systems.explosion:setEmissionRate(674)
     ps.systems.explosion:setSpeed(242/2, 244/2)

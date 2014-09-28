@@ -114,28 +114,39 @@ function level.collide(dt, s1, s2, dx, dy)
         end
 
         if p.isPunching and p.color == b.color then
-            sfx.punch:play()
-            local fx = ps.systems.explosion:clone()
-            local c = COLORS[p.color]
-            fx:setColors(c[1], c[2], c[3], 255, c[1], c[2], c[3], 0)
-            fx:setPosition(p.ax, p.ay)
-            fx:start()
-            table.insert(level.effects, fx)
-            b:destroy()
-            score:incrementKills()
-        else
-            if b.isPowerup then
-                sfx.powerup:play()
-                b:destroy()
-                score:collectPowerup()
+            sfx.impact:rewind()
+            sfx.impact:play()
+            if love.system.getOS() == "Android" then
+                --no explosions
             else
-                sfx.explosion:play()
                 local fx = ps.systems.explosion:clone()
                 local c = COLORS[p.color]
                 fx:setColors(c[1], c[2], c[3], 255, c[1], c[2], c[3], 0)
                 fx:setPosition(p.ax, p.ay)
                 fx:start()
                 table.insert(level.effects, fx)
+            end
+            b:destroy()
+            score:incrementKills()
+        else
+            if b.isPowerup then
+                sfx.powerup:rewind()
+                sfx.powerup:play()
+                b:destroy()
+                score:collectPowerup()
+            else
+                sfx.explosion:rewind()
+                sfx.explosion:play()
+                if love.system.getOS() == "Android" then
+                    --no explosions
+                else
+                    local fx = ps.systems.explosion:clone()
+                    local c = COLORS[p.color]
+                    fx:setColors(c[1], c[2], c[3], 255, c[1], c[2], c[3], 0)
+                    fx:setPosition(p.ax, p.ay)
+                    fx:start()
+                    table.insert(level.effects, fx)
+                end
                 p:deactivate()
                 tc.line = "Collision"
             end

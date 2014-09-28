@@ -79,6 +79,7 @@ function p:switchWithPlayer(other)
     self:setLane(newLane)
     self:moveBy(LANE_SWAP_DUR, 0, (self.lane.pos - other.lane.pos) * self.lane.h, tween.easing.outCubic)
     other:moveBy(LANE_SWAP_DUR, 0, (other.lane.pos - self.lane.pos) * self.lane.h, tween.easing.outCubic)
+    sfx.switch:rewind()
     sfx.switch:play()
 end
 
@@ -270,6 +271,8 @@ end
 
 function p:punch()
     if self.timers.stunned.val == 0 then
+        sfx.punch:rewind()
+        sfx.punch:play()
         local pixels = laneGFX.w * PUNCH_DIST
         local returnDur = pixels / BLOCK_SPEED
         self.isPunching=true
@@ -296,6 +299,7 @@ function p:activate()
         self.isActive=true
         level.collider:setSolid(self.cob)
         if not self.first then
+            sfx.respawn:rewind()
             sfx.respawn:play()
         else
             self.first = false
