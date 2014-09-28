@@ -13,6 +13,7 @@ tween = require ('tween')
 
 
 --global declarations
+la = love.audio
 lg = love.graphics
 lm = love.mouse
 lw = love.window
@@ -90,3 +91,19 @@ COLORS = {{255,0,0},
           {0,255,255},
           {255,0,255},
           {255,255,255}}
+
+-- sounds globals
+
+sfx = {}
+sfx.explosion = la.newSource("assets/SFX/explosion.wav", "static")
+sfx.impact = la.newSource("assets/SFX/impact.wav", "static")
+sfx.powerup = la.newSource("assets/SFX/powerup.wav", "static")
+sfx.punch = la.newSource("assets/SFX/punch.wav", "static")
+sfx.respawn = la.newSource("assets/SFX/respawn.wav", "static")
+sfx.switch = la.newSource("assets/SFX/switch.wav", "static")
+sfx.theme = {}
+sfx.theme[1] = la.newSource("assets/music/theme1.mp3")
+sfx.theme[2] = la.newSource("assets/music/theme2.mp3")
+sfx.theme[3] = la.newSource("assets/music/theme3.mp3")
+
+currentTheme = 1
