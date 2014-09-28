@@ -5,6 +5,7 @@ function love.load()
     tc.load()
     level.collider:setCallbacks(level.collide,level.endCollide)
     score = scoring.new()
+    sfx.theme[currentTheme]:play()
 end
 
 function love.draw()
@@ -26,8 +27,10 @@ function love.draw()
 end
 
 function love.update(dt)
-    if DEBUG_MODE and love.keyboard.isDown('p') then
-        return
+    if DEBUG_MODE then
+        if love.keyboard.isDown('p') then
+            return
+        end
     end
     tc.update(dt)
     
@@ -40,7 +43,6 @@ function love.update(dt)
     end
 
     level.collider:update(dt)
-
 end
 
 function level.buildLanes()
@@ -76,12 +78,15 @@ function level.collide(dt, s1, s2, dx, dy)
         end
 
         if p.isPunching and p.color == b.color then
+            sfx.punch:play()
             b:destroy()
         else
             if b.isPowerup then
+                sfx.powerup:play()
                 b:destroy()
                 score:collectPowerup()
             else
+                sfx.explosion:play()
                 p:deactivate()
                 tc.line = "Collision"
             end
@@ -165,8 +170,15 @@ function love.mousereleased(x, y, button)
     end 
 end
 
-function love.keypressed(key)
-    if level.activePlayer then
+function love.keypressed(key, isrepeat)
+    if DEBUG_MODE and key == 'm' and not isrepeat then
+        sfx.theme[currentTheme]:stop()
+        currentTheme = currentTheme + 1
+        if currentTheme > #sfx.theme then
+            currentTheme = 1
+        end
+        sfx.theme[currentTheme]:play()
+    elseif level.activePlayer then
         if key == cont.jump then
             level.activePlayer:jumpUp()
         elseif key == cont.crouch then

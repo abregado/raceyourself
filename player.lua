@@ -2,6 +2,8 @@ local p = {}
 
 function p.new(lane,color)
     o = {}
+
+    o.first = true
     
     o.x=lane.x+(lane.w*percentPlayerX)
     o.y=lane.y+(lane.h/2)
@@ -75,6 +77,7 @@ function p:switchWithPlayer(other)
     self:setLane(newLane)
     self:moveBy(LANE_SWAP_DUR, 0, (self.lane.pos - other.lane.pos) * self.lane.h, tween.easing.outCubic)
     other:moveBy(LANE_SWAP_DUR, 0, (other.lane.pos - self.lane.pos) * self.lane.h, tween.easing.outCubic)
+    sfx.switch:play()
 end
 
 function p:setLane(l)
@@ -245,6 +248,11 @@ function p:activate()
     if self.isActive == false then
         self.isActive=true
         level.collider:setSolid(self.cob)
+        if not self.first then
+            sfx.respawn:play()
+        else
+            self.first = false
+        end
     end
 end
 
