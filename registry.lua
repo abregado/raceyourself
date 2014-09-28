@@ -40,7 +40,8 @@ playerSize = 0.3 * lw.getHeight() / (LANES * 3)
 BLOCKSIZE = playerSize*2
 ROTSPEED=10
 
-
+ANDROID_INSTRUCTIONS = "Swipe up and down to dodge, Swipe forward to attack. Tap a lane to swap with your wingman"
+DESKTOP_INSTRUCTIONS = "Press UP and DOWN to dodge, Press RIGHT to attack. Press W and S to swap places with a your wingmen"
 
 --player globals
 tapThreshold = 10
@@ -132,9 +133,9 @@ sfx.punch = la.newSource("assets/SFX/punch.wav", "static")
 sfx.respawn = la.newSource("assets/SFX/respawn.wav", "static")
 sfx.switch = la.newSource("assets/SFX/switch.wav", "static")
 sfx.theme = {}
-sfx.theme[1] = la.newSource("assets/music/theme1.mp3")
+--sfx.theme[1] = la.newSource("assets/music/theme1.mp3")
 sfx.theme[2] = la.newSource("assets/music/theme2.mp3")
-sfx.theme[3] = la.newSource("assets/music/theme3.mp3")
+--sfx.theme[3] = la.newSource("assets/music/theme3.mp3")
 
 currentTheme = 2
 
