@@ -114,8 +114,8 @@ function p:drawCon()
         lg.setColor(color.controlled)
         lg.circle("fill", self.ax, self.ay, (playerSize / 4), 9)
     else
-        --lg.setColor(color.colliding)
-        --self.cone:draw('fill')
+        lg.setColor(color.colliding)
+        self.cone:draw('fill')
     end
 end
 
@@ -268,7 +268,7 @@ end
 
 function p:react(options)
    
-    if self.currentMotion == nil and #options>0 then
+    if self.xMotion == nil and self.yMotion == nil and not next(self.xMotionQ) and not next(self.yMotionQ) and #options>0 then
         local delay = math.random(1,10)/10000*AI_DELAYMAX
         local reaction = nil 
         local rand = math.random(1,#options)
