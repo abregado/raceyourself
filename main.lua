@@ -45,17 +45,6 @@ function love.update(dt)
     level.collider:update(dt)
 end
 
-function love.kepressed(key, isrepeat)
-    if key == 'm' and not isrepeat then
-        sfx.theme[currentTheme]:stop()
-        currentTheme = currentTheme + 1
-        if currentTheme > #sfx.theme then
-            currentTheme = 1
-        end
-        sfx.theme[currentTheme]:play()
-    end
-end
-
 function level.buildLanes()
     for i=1,LANES do
         table.insert(level.lanes,lane.new(i))
@@ -181,8 +170,15 @@ function love.mousereleased(x, y, button)
     end 
 end
 
-function love.keypressed(key)
-    if level.activePlayer then
+function love.keypressed(key, isrepeat)
+    if DEBUG_MODE and key == 'm' and not isrepeat then
+        sfx.theme[currentTheme]:stop()
+        currentTheme = currentTheme + 1
+        if currentTheme > #sfx.theme then
+            currentTheme = 1
+        end
+        sfx.theme[currentTheme]:play()
+    elseif level.activePlayer then
         if key == cont.jump then
             level.activePlayer:jumpUp()
         elseif key == cont.crouch then
