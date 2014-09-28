@@ -16,11 +16,7 @@ function l.new(pos)
     o.blocks = {}
     o.powerups = {}
     o.player = nil
-    
-    
-    --o.collider = HC.new()
-    --o.collider:setCallbacks(l.collide,l.endCollide)
-    
+
     l.setupMethods(o)
     
     return o
@@ -45,11 +41,6 @@ end
 
 function l:draw()
     lg.setColor(255,255,255)
-    --draw lane background at location x,y (in case we need to repos the lanes
-    --lg.setColor(color.lane)
-    --lg.rectangle("fill",self.x,self.y,self.w,self.h)
-    --lg.setColor(color.divider)
-    --lg.rectangle("line",self.x,self.y,self.w,self.h)
     
     for i,v in ipairs(self.bgBlocks) do
         local gw = as.laneBG:getHeight()
@@ -100,13 +91,7 @@ function l:update(dt)
         v:move(dt)
     end
     
-    --garbage disposal
-    self:removeBlocks()
     
-    --for testing, add a block when there are none
-    if #self.blocks==0 then
-        self:spawnBlock()
-    end
     
     --scroll background
     for i,v in ipairs(self.bgBlocks) do
@@ -122,17 +107,59 @@ function l:update(dt)
     end
     
     --garbage disposal
+    self:removeBlocks()
     self:removePowerups()
     
-    --self.collider:update(dt)
-    
+    --for testing, add a block when there are none
+    if #self.blocks==0 and #self.powerups ==0 then
+        self:spawnBlock()
+    end
     
 end
 
 function l:spawnBlock()
-    local b = block.new(self)
-    self:spawnPowerup(b)
-    table.insert(self.blocks,block.new(self))
+    --actually spawns a new obstacle which can include blocks and powerups
+    local spaces = {}
+    for i=1, 3 do
+        local space = {x=self.w,y=(i*self.h/4)+self.y}
+        table.insert(spaces,space)
+    end
+    
+    local oType = math.random(1,5)
+    local pRand = math.random(1,3)
+    local cRand = math.random(1,LANES)
+    
+    if oType == 1 then
+        --two obstacles at top, maybe a powerup
+        table.insert(self.blocks,block.new(spaces[1].x,spaces[1].y,cRand,oType))
+        table.insert(self.blocks,block.new(spaces[2].x,spaces[2].y,cRand,oType))
+        if pRand == 3 then
+            table.insert(self.powerups,powerup.new(spaces[3].x,spaces[3].y))
+        end
+    elseif oType == 2 then
+        --one obstacle middle, maybe one powerup
+        table.insert(self.blocks,block.new(spaces[2].x,spaces[2].y,cRand,oType))
+        if not pRand == 2 then
+            table.insert(self.powerups,powerup.new(spaces[pRand].x,spaces[pRand].y))
+        end
+    elseif oType == 3 then
+        --two obstacles at the bottom, maybe a powerup
+        table.insert(self.blocks,block.new(spaces[3].x,spaces[3].y,cRand,oType))
+        table.insert(self.blocks,block.new(spaces[2].x,spaces[2].y,cRand,oType))
+        if pRand == 1 then
+            table.insert(self.powerups,powerup.new(spaces[1].x,spaces[1].y))
+        end
+    elseif oType == 4 then
+        --three powerups
+        table.insert(self.powerups,powerup.new(spaces[1].x,spaces[1].y))
+        table.insert(self.powerups,powerup.new(spaces[2].x,spaces[2].y))
+        table.insert(self.powerups,powerup.new(spaces[3].x,spaces[3].y))
+    elseif oType == 5 then
+        --one random powerup
+        
+        table.insert(self.powerups,powerup.new(spaces[pRand].x,spaces[pRand].y))
+    end
+
 end
 
 function l:removeBlocks(all)

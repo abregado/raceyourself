@@ -19,7 +19,7 @@ lg = love.graphics
 lm = love.mouse
 lw = love.window
 
-DEBUG_MODE = true
+DEBUG_MODE = false
 
 LANES = 3
 AI_DELAYMAX = 67
@@ -34,10 +34,12 @@ JUMP_HALF_DUR = 0.3
 JUMP_DELAY_DUR = 0.1
 LANE_SWAP_DUR = 0.2
 
-
 playerSize = 0.3 * lw.getHeight() / (LANES * 3)
 
-VIEWCONE = {w=playerSize*3,h=playerSize*2}
+BLOCKSIZE = playerSize*2
+ROTSPEED=10
+
+
 
 --player globals
 tapThreshold = 10
@@ -63,7 +65,7 @@ screen = {w=lg.getWidth(),h=lg.getHeight()}
 laneGFX = {w=screen.w,h=screen.h/LANES}
 
 BLOCK_SPEED = laneGFX.w / 3
-
+VIEWCONE = {w=playerSize*3,h=screen.h/LANES*.9}
 gfx = {}
 
 level={}
@@ -111,7 +113,11 @@ as.pBullet[2] = lg.newImage('assets/gbullet.png')
 as.pBullet[3] = lg.newImage('assets/bbullet.png')
 as.laneBG = lg.newImage('assets/bg_tile.png')
 as.laneOver = lg.newImage('assets/lane_overlay.png')
-
+as.eShip ={}
+as.eShip[1] = lg.newImage('assets/renemy.png')
+as.eShip[2] = lg.newImage('assets/genemy.png')
+as.eShip[3] = lg.newImage('assets/benemy.png')
+as.pup = lg.newImage('assets/powerup.png')
 
 
 -- sounds globals

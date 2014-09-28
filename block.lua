@@ -1,38 +1,27 @@
 local b = {}
 
-function b.new(lane)
+function b.new(x,y,color,boxType)
     o={}
     
-    o.x=laneGFX.w
-    o.y= lane.y
+    o.x= x
+    o.y= y
     
-    o.w = laneGFX.h/9
-    o.h = laneGFX.h/3
-    
-    
+    o.w = BLOCKSIZE
+    o.h = BLOCKSIZE
     
     o.isGarbage = false
-    o.lane = lane
+    o.isBlock = true
+    o.color = color
+    o.rot = 0
     
-    o.boxType = math.floor(math.random(1,3))
-    o.color = math.floor(math.random(1,LANES))
+    o.boxType = boxType
     
-    if o.boxType == 1 then
-        o.h = o.h*2
-    elseif o.boxType == 2 then
-        o.y = o.y+o.h
-    elseif o.boxType == 3 then
-        o.y = o.y+o.h
-        o.h= o.h*2
-    end
-    
-    o.ox = o.w/2
-    o.oy = o.h/2
-    
-    o.cob = level.collider:addRectangle(o.x+o.ox,o.y+o.oy,o.w,o.h)
+    o.cob = level.collider:addCircle(0,0,o.w/2)
+    o.cob:moveTo(o.x,o.y)
     o.cob.parent = o
     
     b.setupMethods(o)
+    
     return o
     
 end
@@ -41,6 +30,7 @@ function b.setupMethods(o)
     o.move = b.move
     o.draw = b.draw
     o.destroy = b.destroy
+    o.drawSprite = b.drawSprite
 end
 
 function b:move(dt)
@@ -51,19 +41,29 @@ function b:move(dt)
         
     end
     
-    self.cob:moveTo(self.x+self.ox,self.y+self.oy)
-    
+    self.cob:moveTo(self.x,self.y)
+    self.rot = self.rot+dt*ROTSPEED
 end
 
-function b:draw(x,y)
-    if self.isGarbage then
-        lg.setColor(0,0,0)
-    elseif self.isColliding then
-        lg.setColor(color.colliding)
-    else
+function b:draw()
+    self:drawSprite()
+    
+    if DEBUG_MODE then
         lg.setColor(COLORS[self.color])
+        self.cob:draw('line')
     end
-    self.cob:draw('fill')
+end
+
+function b:drawSprite()
+    lg.setColor(color.render)
+    local sp = as.eShip[self.color]
+    local gw = sp:getWidth()
+    local gh = sp:getHeight()
+    local sx = BLOCKSIZE/gw*1.8
+    local sy = BLOCKSIZE/gh*1.8
+    local ox = gw/2*sx
+    local oy = gh/2*sy
+    lg.draw(sp,self.x-ox,self.y-oy,0,sx,sy)
 end
 
 function b:destroy()
