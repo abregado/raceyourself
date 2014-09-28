@@ -40,7 +40,7 @@ playerSize = 0.3 * lw.getHeight() / (LANES * 3)
 BLOCKSIZE = playerSize*2
 ROTSPEED=10
 
-
+START_LIVES = 5
 
 --player globals
 tapThreshold = 10
@@ -65,7 +65,9 @@ cont.quit = "escape"
 screen = {w=lg.getWidth(),h=lg.getHeight()}
 laneGFX = {w=screen.w,h=screen.h/LANES}
 
+START_BLOCK_SPEED = laneGFX.w / 3
 BLOCK_SPEED = laneGFX.w / 3
+
 VIEWCONE = {w=playerSize*3,h=screen.h/LANES*.9}
 gfx = {}
 

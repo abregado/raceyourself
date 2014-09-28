@@ -56,6 +56,10 @@ function updateAnims(dt)
 end
 
 function love.update(dt)
+    if score:isGameOver() then
+        return
+    end
+
     if DEBUG_MODE then
         if love.keyboard.isDown('p') then
             return
@@ -148,6 +152,11 @@ function level.collide(dt, s1, s2, dx, dy)
                 fx:setPosition(p.ax, p.ay)
                 fx:start()
                 table.insert(level.effects, fx)
+
+                if p.isControlled then
+                    score:decrementLives()
+                end
+
                 p:deactivate()
                 tc.line = "Collision"
             end
