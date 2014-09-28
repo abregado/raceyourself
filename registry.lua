@@ -1,7 +1,9 @@
 --requires
 lane = require('lane')
 block = require('block')
+powerup = require('powerup')
 tc = require('touch')
+scoring = require('scoring')
 player = require('player')
 HC = require('HardonCollider')
 camera = require ('hump-master/camera')
@@ -14,6 +16,8 @@ tween = require ('tween')
 lg = love.graphics
 lm = love.mouse
 lw = love.window
+
+DEBUG_MODE = true
 
 LANES = 3
 BLOCK_SPEED = 300
