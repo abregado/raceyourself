@@ -2,6 +2,8 @@ local p = {}
 
 function p.new(lane,color)
     o = {}
+
+    o.first = true
     
     o.x=lane.x+(lane.w*percentPlayerX)
     o.y=lane.y+(lane.h/2)
@@ -20,7 +22,7 @@ function p.new(lane,color)
     o.timers.stunned = {val=0}
     o.timers.respawn = {val=0}
     o.timers.deactive = {val=0}
-    
+
     o.cob = level.collider:addCircle(o.ax,o.ay,playerSize/2)
     o.cob.parent = o
     local c = VIEWCONE
@@ -77,6 +79,7 @@ function p:switchWithPlayer(other)
     self:setLane(newLane)
     self:moveBy(LANE_SWAP_DUR, 0, (self.lane.pos - other.lane.pos) * self.lane.h, tween.easing.outCubic)
     other:moveBy(LANE_SWAP_DUR, 0, (other.lane.pos - self.lane.pos) * self.lane.h, tween.easing.outCubic)
+    sfx.switch:play()
 end
 
 function p:setLane(l)
@@ -107,6 +110,12 @@ function p:draw()
     
 
     if DEBUG_MODE then
+        local gw = as.pShip[self.color]:getHeight()
+        local gh = as.pShip[self.color]:getHeight()
+        local sx = playerSize/gw*3.5
+        local sy = playerSize/gh*3.5
+        local ox = gw/2*sx
+        local oy = gh/2*sy
         lg.setLineWidth(1)
         lg.setColor(color.debug)
         lg.circle("fill",self.ax-ox,self.ay-oy,5,5)
@@ -286,6 +295,11 @@ function p:activate()
     if self.isActive == false then
         self.isActive=true
         level.collider:setSolid(self.cob)
+        if not self.first then
+            sfx.respawn:play()
+        else
+            self.first = false
+        end
     end
 end
 
