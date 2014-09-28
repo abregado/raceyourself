@@ -1,7 +1,9 @@
 --requires
 lane = require('lane')
 block = require('block')
+powerup = require('powerup')
 tc = require('touch')
+scoring = require('scoring')
 player = require('player')
 HC = require('HardonCollider')
 camera = require ('hump-master/camera')
@@ -12,14 +14,14 @@ an = require ('anim8/anim8')
 
 
 --global declarations
+la = love.audio
 lg = love.graphics
 lm = love.mouse
 lw = love.window
 
-DEBUG_MODE = false
+DEBUG_MODE = true
 
 LANES = 3
-BLOCK_SPEED = 300
 AI_DELAYMAX = 67
 
 DEATH_TIME = 5
@@ -59,6 +61,8 @@ cont.quit = "escape"
 --graphics globals
 screen = {w=lg.getWidth(),h=lg.getHeight()}
 laneGFX = {w=screen.w,h=screen.h/LANES}
+
+BLOCK_SPEED = laneGFX.w / 3
 
 gfx = {}
 
@@ -109,3 +113,19 @@ as.laneBG = lg.newImage('assets/bg_tile.png')
 as.laneOver = lg.newImage('assets/lane_overlay.png')
 
 
+
+-- sounds globals
+
+sfx = {}
+sfx.explosion = la.newSource("assets/SFX/explosion.wav", "static")
+sfx.impact = la.newSource("assets/SFX/impact.wav", "static")
+sfx.powerup = la.newSource("assets/SFX/powerup.wav", "static")
+sfx.punch = la.newSource("assets/SFX/punch.wav", "static")
+sfx.respawn = la.newSource("assets/SFX/respawn.wav", "static")
+sfx.switch = la.newSource("assets/SFX/switch.wav", "static")
+sfx.theme = {}
+sfx.theme[1] = la.newSource("assets/music/theme1.mp3")
+sfx.theme[2] = la.newSource("assets/music/theme2.mp3")
+sfx.theme[3] = la.newSource("assets/music/theme3.mp3")
+
+currentTheme = 1
