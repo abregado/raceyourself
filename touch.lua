@@ -58,10 +58,6 @@ function tc.horizontalSwipe(right)
 end
 
 function tc.tap(x, y)
-    if level.activePlayer.currentMotion ~= nil then
-        return
-    end
-
     local tappedLane = nil
 
     for i,v in ipairs(level.lanes) do

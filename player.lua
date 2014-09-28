@@ -35,8 +35,10 @@ function p.new(lane,color)
 
     
 
-    o.motions = {}
-    o.currentMotion = nil
+    o.xMotionQ = {}
+    o.yMotionQ = {}
+    o.xMotion = nil
+    o.yMotion = nil
     
     o.lane:givePlayer(o)    
     
@@ -52,7 +54,7 @@ function p.setupMethods(o)
     o.setLane = p.setLane
     o.draw = p.draw
     o.update = p.update
-    o.getNextMotion = p.getNextMotion
+    o.getNextMotions = p.getNextMotions
     o.moveTo = p.moveTo
     o.moveBy = p.moveBy
     o.delay = p.delay
@@ -71,8 +73,8 @@ function p:switchWithPlayer(other)
     --other.lane.collider:remove(other.cob)
     other:setLane(self.lane)
     self:setLane(newLane)
-    self:moveTo(LANE_SWAP_DUR, self.ax, self.lane.y + self.lane.h / 2, tween.easing.outCubic)
-    other:moveTo(LANE_SWAP_DUR, other.ax, other.lane.y + other.lane.h / 2, tween.easing.outCubic)
+    self:moveBy(LANE_SWAP_DUR, 0, (self.lane.pos - other.lane.pos) * self.lane.h, tween.easing.outCubic)
+    other:moveBy(LANE_SWAP_DUR, 0, (other.lane.pos - self.lane.pos) * self.lane.h, tween.easing.outCubic)
 end
 
 function p:setLane(l)
@@ -117,36 +119,54 @@ function p:drawCon()
     end
 end
 
+function p:getNextMotions()
+    if not self.xMotion then
+        local nextX = table.remove(self.xMotionQ, 1)
+        if nextX then
+            nextX.endX = nextX.endX or (nextX.deltaX + self.ax)
+            nextX.startX = self.ax
+            self.xMotion = tween.new(nextX.dur, 
+                                     {x=nextX.startX}, 
+                                     {x=nextX.endX},
+                                     nextX.tween or tween.easing.linear)
+        else
+            self.xMotion = nil
+        end
+    end
 
-function p:getNextMotion()
-    local nextMotion = table.remove(self.motions, 1)
-    if nextMotion then
-        nextMotion.endX = nextMotion.endX or (nextMotion.deltaX + self.ax)
-        nextMotion.endY = nextMotion.endY or (nextMotion.deltaY + self.ay)
-        nextMotion.startX = self.ax
-        nextMotion.startY = self.ay
-        self.currentMotion = tween.new(nextMotion.dur, 
-                                       {x=nextMotion.startX, y=nextMotion.startY}, 
-                                       {x=nextMotion.endX, y=nextMotion.endY},
-                                       nextMotion.tween or tween.easing.linear)
-    else
-        self.currentMotion = nil
+    if not self.yMotion then
+        local nextY = table.remove(self.yMotionQ, 1)
+        if nextY then
+            nextY.endY = nextY.endY or (nextY.deltaY + self.ay)
+            nextY.startY = self.ay
+            self.yMotion = tween.new(nextY.dur, 
+                                     {y=nextY.startY}, 
+                                     {y=nextY.endY},
+                                     nextY.tween or tween.easing.linear)
+        else
+            self.yMotion = nil
+        end
     end
 end
 
 function p:update(dt)
-    if self.currentMotion then
-        local complete = self.currentMotion:update(dt)
+    local xEnd = nil
+    local yEnd = nil
 
-        self.ax = self.currentMotion.subject.x
-        self.ay = self.currentMotion.subject.y
+    self:getNextMotions()
 
-        if complete then
-            self:getNextMotion()
-        end
-    elseif self.motions then
-        self:getNextMotion()
+    if self.xMotion then
+        xEnd = self.xMotion:update(dt)
+        self.ax = self.xMotion.subject.x
     end
+
+    if self.yMotion then
+        yEnd = self.yMotion:update(dt)
+        self.ay = self.yMotion.subject.y
+    end
+
+    if xEnd then self.xMotion = nil end
+    if yEnd then self.yMotion = nil end
     
     for i,v in pairs(self.timers) do
         if v.val>0 then
@@ -169,15 +189,26 @@ function p:update(dt)
 end
 
 function p:moveTo(dur, x, y, tweenFunc)
-    table.insert(self.motions, {dur=dur, endX=x, endY=y, elapsed=0.0, tween=tweenFunc})
+    if x ~= 0 then
+        table.insert(self.xMotionQ, {dur=dur, endX=x, elapsed=0.0, tween=tweenFunc})
+    end
+    if y ~= 0 then
+        table.insert(self.yMotionQ, {dur=dur, endY=y, elapsed=0.0, tween=tweenFunc})
+    end
 end
 
 function p:moveBy(dur, x, y, tweenFunc)
-    table.insert(self.motions, {dur=dur, deltaX=x, deltaY=y, elapsed=0.0, tween=tweenFunc})
+    if x ~= 0 then
+        table.insert(self.xMotionQ, {dur=dur, deltaX=x, elapsed=0.0, tween=tweenFunc})
+    end
+    if y ~= 0 then
+        table.insert(self.yMotionQ, {dur=dur, deltaY=y, elapsed=0.0, tween=tweenFunc})
+    end
 end
 
 function p:delay(dur)
-    table.insert(self.motions, {dur=dur, deltaX=0, deltaY=0, elapsed=0.0})
+    table.insert(self.xMotionQ, {dur=dur, deltaX=0, elapsed=0.0})
+    table.insert(self.yMotionQ, {dur=dur, deltaY=0, elapsed=0.0})
 end
 
 function p.swapLanes(from, to)
