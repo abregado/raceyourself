@@ -42,6 +42,7 @@ ROTSPEED=10
 
 ANDROID_INSTRUCTIONS = "Swipe up and down to dodge, Swipe forward to attack. Tap a lane to swap with your wingman"
 DESKTOP_INSTRUCTIONS = "Press UP and DOWN to dodge, Press RIGHT to attack. Press W and S to swap places with a your wingmen"
+START_LIVES = 5
 
 --player globals
 tapThreshold = 10
@@ -66,7 +67,9 @@ cont.quit = "escape"
 screen = {w=lg.getWidth(),h=lg.getHeight()}
 laneGFX = {w=screen.w,h=screen.h/LANES}
 
+START_BLOCK_SPEED = laneGFX.w / 3
 BLOCK_SPEED = laneGFX.w / 3
+
 VIEWCONE = {w=playerSize*3,h=screen.h/LANES*.9}
 gfx = {}
 

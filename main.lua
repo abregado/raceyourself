@@ -8,6 +8,9 @@ function love.load()
     level.collider:setCallbacks(level.collide,level.endCollide)
     score = scoring.new()
     sfx.theme[currentTheme]:play()
+    baseCalm = 3
+    calmBeforeStorm = baseCalm
+    stormFactor = 0
 end
 
 function buildAnimations()
@@ -53,6 +56,10 @@ function updateAnims(dt)
 end
 
 function love.update(dt)
+    if score:isGameOver() then
+        return
+    end
+
     if DEBUG_MODE then
         if love.keyboard.isDown('p') then
             return
@@ -76,6 +83,15 @@ function love.update(dt)
             table.remove(level.effects, i)
         end
     end
+
+    if calmBeforeStorm > 0 then
+        calmBeforeStorm = calmBeforeStorm - dt
+    else
+        stormFactor = stormFactor + 1
+        calmBeforeStorm = baseCalm + stormFactor
+    end
+
+    BLOCK_SPEED = BLOCK_SPEED + stormFactor * dt
 
     updateAnims(dt)
 
@@ -147,6 +163,11 @@ function level.collide(dt, s1, s2, dx, dy)
                     fx:start()
                     table.insert(level.effects, fx)
                 end
+
+                if p.isControlled then
+                    score:decrementLives()
+                end
+
                 p:deactivate()
                 tc.line = "Collision"
             end
