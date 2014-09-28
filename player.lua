@@ -301,4 +301,16 @@ function p:jumpUp()
     self:moveBy(JUMP_HALF_DUR, 0, laneGFX.h / 3, tween.easing.inCubic)
 end
 
+function p.laneDown()
+    if level.activePlayer.lane.pos < LANES then
+        player.swapLanes(level.activePlayer, level.lanes[level.activePlayer.lane.pos+1].player)
+    end
+end
+
+function p.laneUp()
+    if level.activePlayer.lane.pos > 1 then
+        player.swapLanes(level.activePlayer, level.lanes[level.activePlayer.lane.pos-1].player)
+    end
+end
+
 return p

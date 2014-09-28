@@ -156,3 +156,21 @@ function love.mousereleased(x, y, button)
         end
     end 
 end
+
+function love.keypressed(key)
+    if level.activePlayer then
+        if key == cont.jump then
+            level.activePlayer:jumpUp()
+        elseif key == cont.crouch then
+            level.activePlayer:jumpDown()
+        elseif key == cont.punch then
+            level.activePlayer:punch()
+        elseif key == cont.laneUp then
+            player.laneUp()
+        elseif key == cont.laneDown then
+            player.laneDown()
+        end
+    elseif key == cont.quit then
+        love.event.quit()
+    end
+end

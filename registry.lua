@@ -44,6 +44,15 @@ vertSwipeRatio = 1.5
 percentPlayerX = 0.1
 playerLane = math.ceil(LANES / 2)
 
+--control
+cont={}
+cont.jump = "up"
+cont.crouch = "down"
+cont.punch = "right"
+cont.laneUp = "w"
+cont.laneDown = "s"
+cont.quit = "escape"
+
 --graphics globals
 screen = {w=lg.getWidth(),h=lg.getHeight()}
 laneGFX = {w=screen.w,h=screen.h/LANES}
