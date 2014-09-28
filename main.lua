@@ -170,7 +170,9 @@ function love.keypressed(key)
         elseif key == cont.laneDown then
             player.laneDown()
         end
-    elseif key == cont.quit then
+    end
+    
+    if key == cont.quit then
         love.event.quit()
     end
 end
