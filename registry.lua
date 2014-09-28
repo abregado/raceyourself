@@ -3,6 +3,7 @@ lane = require('lane')
 block = require('block')
 powerup = require('powerup')
 tc = require('touch')
+ps = require('particles')
 scoring = require('scoring')
 player = require('player')
 HC = require('HardonCollider')
@@ -19,7 +20,7 @@ lg = love.graphics
 lm = love.mouse
 lw = love.window
 
-DEBUG_MODE = true
+DEBUG_MODE = false
 
 LANES = 3
 AI_DELAYMAX = 67
@@ -69,6 +70,7 @@ gfx = {}
 level={}
 level.lanes={}
 level.players={}
+level.effects={}
 level.activePlayer = nil
 level.collider = HC.new()
     
@@ -128,4 +130,4 @@ sfx.theme[1] = la.newSource("assets/music/theme1.mp3")
 sfx.theme[2] = la.newSource("assets/music/theme2.mp3")
 sfx.theme[3] = la.newSource("assets/music/theme3.mp3")
 
-currentTheme = 1
+currentTheme = 2
