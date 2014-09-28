@@ -1,38 +1,26 @@
 local b = {}
 
-function b.new(lane)
+function b.new(x,y,color,boxType)
     o={}
     
-    o.x=laneGFX.w
-    o.y= lane.y
+    o.x= x
+    o.y= y
     
-    o.w = laneGFX.h/9
-    o.h = laneGFX.h/3
-    
-    
+    o.w = BLOCKSIZE
+    o.h = BLOCKSIZE
     
     o.isGarbage = false
-    o.lane = lane
+    o.isBlock = true
+    o.color = color
     
-    o.boxType = math.floor(math.random(1,3))
-    o.color = math.floor(math.random(1,LANES))
+    o.boxType = boxType
     
-    if o.boxType == 1 then
-        o.h = o.h*2
-    elseif o.boxType == 2 then
-        o.y = o.y+o.h
-    elseif o.boxType == 3 then
-        o.y = o.y+o.h
-        o.h= o.h*2
-    end
-    
-    o.ox = o.w/2
-    o.oy = o.h/2
-    
-    o.cob = level.collider:addRectangle(o.x+o.ox,o.y+o.oy,o.w,o.h)
+    o.cob = level.collider:addRectangle(0,0,o.w,o.h)
+    o.cob:moveTo(o.x,o.y)
     o.cob.parent = o
     
     b.setupMethods(o)
+    
     return o
     
 end
@@ -51,18 +39,12 @@ function b:move(dt)
         
     end
     
-    self.cob:moveTo(self.x+self.ox,self.y+self.oy)
+    self.cob:moveTo(self.x,self.y)
     
 end
 
 function b:draw(x,y)
-    if self.isGarbage then
-        lg.setColor(0,0,0)
-    elseif self.isColliding then
-        lg.setColor(color.colliding)
-    else
-        lg.setColor(COLORS[self.color])
-    end
+    lg.setColor(COLORS[self.color])
     self.cob:draw('fill')
 end
 
