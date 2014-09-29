@@ -2,15 +2,23 @@ require('registry')
 
 function love.load()
     buildAnimations()
-    level.buildLanes()
-    tc.load()
-    ps.load()
     level.collider:setCallbacks(level.collide,level.endCollide)
     score = scoring.new()
     sfx.theme[currentTheme]:play()
+    tc.load()
+    ps.load()
+    restart()
+end
+
+function restart()
+    level.collider:clear()
+    BLOCK_SPEED = START_BLOCK_SPEED
     baseCalm = 3
     calmBeforeStorm = baseCalm
     stormFactor = 0
+    score:reset()
+    level.reset()
+    level.buildLanes()
 end
 
 function buildAnimations()
@@ -56,27 +64,6 @@ function updateAnims(dt)
 end
 
 function love.update(dt)
-    if score:isGameOver() then
-        return
-    end
-
-    if DEBUG_MODE then
-        if love.keyboard.isDown('p') then
-            return
-        end
-    end
-    tc.update(dt)
-    
-    for i,v in ipairs(level.lanes) do
-        v:update(dt)
-    end
-    
-    for i,v in ipairs(level.players) do
-        v:update(dt)
-    end
-
-    level.collider:update(dt)
-
     for i,v in pairs(level.effects) do
         v:update(dt)
         if v:getCount() == 0 then
@@ -84,17 +71,42 @@ function love.update(dt)
         end
     end
 
-    if calmBeforeStorm > 0 then
-        calmBeforeStorm = calmBeforeStorm - dt
-    else
-        stormFactor = stormFactor + 1
-        calmBeforeStorm = baseCalm + stormFactor
+    if not score:isGameOver() then
+        if DEBUG_MODE then
+            if love.keyboard.isDown('p') then
+                return
+            end
+        end
+        
+        for i,v in ipairs(level.lanes) do
+            v:update(dt)
+        end
+        
+        for i,v in ipairs(level.players) do
+            v:update(dt)
+        end
+    
+        level.collider:update(dt)
+    
+        if calmBeforeStorm > 0 then
+            calmBeforeStorm = calmBeforeStorm - dt
+        else
+            stormFactor = stormFactor + 1
+            calmBeforeStorm = baseCalm + stormFactor
+        end
+    
+        BLOCK_SPEED = BLOCK_SPEED + stormFactor * dt
+    
+        updateAnims(dt)
     end
 
-    BLOCK_SPEED = BLOCK_SPEED + stormFactor * dt
+    tc.update(dt)
+end
 
-    updateAnims(dt)
-
+function level.reset()
+    level.lanes = {}
+    level.players = {}
+    level.effects = {}
 end
 
 function level.buildLanes()
@@ -231,7 +243,7 @@ function love.mousereleased(x, y, button)
         if not touchMoved then
             -- tap detected
             tc.tap(x, y)
-        else
+        elseif not score:isGameOver() then
             local dx = lm.getX() - origTouchX
             local dy = lm.getY() - origTouchY
 
@@ -252,28 +264,35 @@ function love.mousereleased(x, y, button)
 end
 
 function love.keypressed(key, isrepeat)
-    if DEBUG_MODE and key == 'm' and not isrepeat then
-        sfx.theme[currentTheme]:stop()
-        currentTheme = currentTheme + 1
-        if currentTheme > #sfx.theme then
-            currentTheme = 1
+    if score:isGameOver() then
+        if key == cont.restart then
+            restart()
         end
-        sfx.theme[currentTheme]:play()
-    elseif level.activePlayer then
-        if key == cont.jump then
-            level.activePlayer:jumpUp()
-        elseif key == cont.crouch then
-            level.activePlayer:jumpDown()
-        elseif key == cont.punch then
-            level.activePlayer:punch()
-        elseif key == cont.laneUp then
-            player.laneUp()
-        elseif key == cont.laneDown then
-            player.laneDown()
+    else
+        if DEBUG_MODE and key == 'm' and not isrepeat then
+            sfx.theme[currentTheme]:stop()
+            currentTheme = currentTheme + 1
+            if currentTheme > #sfx.theme then
+                currentTheme = 1
+            end
+            sfx.theme[currentTheme]:play()
+        elseif level.activePlayer then
+            if key == cont.jump then
+                level.activePlayer:jumpUp()
+            elseif key == cont.crouch then
+                level.activePlayer:jumpDown()
+            elseif key == cont.punch then
+                level.activePlayer:punch()
+            elseif key == cont.laneUp then
+                player.laneUp()
+            elseif key == cont.laneDown then
+                player.laneDown()
+            end
         end
     end
     
     if key == cont.quit then
         love.event.quit()
     end
+
 end

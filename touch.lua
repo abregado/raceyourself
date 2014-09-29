@@ -60,6 +60,10 @@ function tc.horizontalSwipe(right)
 end
 
 function tc.tap(x, y)
+    if score:isGameOver() then
+        restart()
+    end
+
     local tappedLane = nil
 
     for i,v in ipairs(level.lanes) do
