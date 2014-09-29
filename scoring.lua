@@ -54,6 +54,18 @@ function s:draw()
         local f = lg.newFont(100)
         local fh = f:getHeight()
         local fw = f:getWidth(msg)
+
+        local resetMsg
+
+        if love.system.getOS() == "Android" then
+            resetMsg = ANDROID_RESTART
+        else
+            resetMsg = DESKTOP_RESTART
+        end
+
+        local rw = self.font:getWidth(resetMsg)
+
+        lg.print(resetMsg, (lw.getWidth() - rw) / 2, (lw.getHeight() + fh * 1.2) / 2)
         lg.setFont(f)
         lg.print(msg, (lw.getWidth() - fw) / 2, (lw.getHeight() - fh) / 2)
     end

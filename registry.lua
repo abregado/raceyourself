@@ -42,6 +42,8 @@ ROTSPEED=10
 
 ANDROID_INSTRUCTIONS = "Swipe up and down to dodge, Swipe forward to attack. Tap a lane to swap with your wingman"
 DESKTOP_INSTRUCTIONS = "Press UP and DOWN to dodge, Press RIGHT to attack. Press W and S to swap places with a your wingmen"
+ANDROID_RESTART = "Tap to restart"
+DESKTOP_RESTART = "Press R to restart"
 START_LIVES = 5
 
 --player globals
@@ -62,6 +64,7 @@ cont.punch = "right"
 cont.laneUp = "w"
 cont.laneDown = "s"
 cont.quit = "escape"
+cont.restart = "r"
 
 --graphics globals
 screen = {w=lg.getWidth(),h=lg.getHeight()}
