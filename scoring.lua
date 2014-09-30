@@ -3,6 +3,37 @@ local s = {}
 function s.new()
     o = {}
 
+    o.font = lg.newFont()
+    o.bigFont = lg.newFont(100)
+
+    o.lLine = "SPACELIVES"
+    o.pLine = "SPACECOINS"
+    o.kLine = "SPACEKILLS"
+    o.lWidth = o.font:getWidth(o.lLine)
+    o.pWidth = o.font:getWidth(o.pLine)
+    o.kWidth = o.font:getWidth(o.kLine)
+    o.fontHeight = o.font:getHeight()
+
+    o.maxX = lw.getWidth() - edgeBuffer
+    o.midX = o.maxX - o.kWidth * 1.2
+    o.minX = o.midX - o.pWidth * 1.2
+    o.microX = o.minX - o.lWidth * 1.2
+    o.minY = edgeBuffer
+    o.midY = o.minY + o.fontHeight * 1.4
+    o.maxY = o.midY + o.fontHeight * 1.4
+
+    o.gameOverMsg = "GAME OVER"
+    o.bigFontHeight = o.bigFont:getHeight()
+    o.gameOverMsgWidth = o.bigFont:getWidth(o.gameOverMsg)
+
+    if love.system.getOS() == "Android" then
+        o.resetMsg = ANDROID_RESTART
+    else
+        o.resetMsg = DESKTOP_RESTART
+    end
+
+    o.resetMsgWidth = o.font:getWidth(o.resetMsg)
+
     s.setupMethods(o)
 
     o:reset()
@@ -50,24 +81,9 @@ function s:draw()
     end
 
     if self.gameOver then
-        local msg = "GAME OVER"
-        local f = lg.newFont(100)
-        local fh = f:getHeight()
-        local fw = f:getWidth(msg)
-
-        local resetMsg
-
-        if love.system.getOS() == "Android" then
-            resetMsg = ANDROID_RESTART
-        else
-            resetMsg = DESKTOP_RESTART
-        end
-
-        local rw = self.font:getWidth(resetMsg)
-
-        lg.print(resetMsg, (lw.getWidth() - rw) / 2, (lw.getHeight() + fh * 1.2) / 2)
-        lg.setFont(f)
-        lg.print(msg, (lw.getWidth() - fw) / 2, (lw.getHeight() - fh) / 2)
+        lg.print(self.resetMsg, (lw.getWidth() - self.resetMsgWidth) / 2, (lw.getHeight() + self.bigFontHeight * 1.2) / 2)
+        lg.setFont(self.bigFont)
+        lg.print(self.gameOverMsg, (lw.getWidth() - self.gameOverMsgWidth) / 2, (lw.getHeight() - self.bigFontHeight) / 2)
     end
 end
 
@@ -76,22 +92,6 @@ function s:reset()
     self.kills = 0
     self.gameOver = false
     self.lives = START_LIVES
-    self.lLine = "SPACELIVES"
-    self.pLine = "SPACECOINS"
-    self.kLine = "SPACEKILLS"
-    self.font = lg.newFont()
-    self.lWidth = self.font:getWidth(self.lLine)
-    self.pWidth = self.font:getWidth(self.pLine)
-    self.kWidth = self.font:getWidth(self.kLine)
-    self.fontHeight = self.font:getHeight()
-
-    self.maxX = lw.getWidth() - edgeBuffer
-    self.midX = self.maxX - self.kWidth * 1.2
-    self.minX = self.midX - self.pWidth * 1.2
-    self.microX = self.minX - self.lWidth * 1.2
-    self.minY = edgeBuffer
-    self.midY = self.minY + self.fontHeight * 1.4
-    self.maxY = self.midY + self.fontHeight * 1.4
 end
 
 function s:collectPowerup()
