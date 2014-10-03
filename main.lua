@@ -24,7 +24,7 @@ end
 function buildAnimations()
     anims.pShip = {}
     for i,v in ipairs(as.pShip) do
-        local newSheet = an.newGrid(640,640,v:getWidth(),v:getHeight())
+        local newSheet = an.newGrid(64,64,v:getWidth(),v:getHeight())
         local newAnim = an.newAnimation(newSheet('1-5',1),0.3)
         table.insert(anims.pShip,newAnim)
     end
