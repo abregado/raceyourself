@@ -317,6 +317,8 @@ function p:look(shape)
             table.insert(options,"UP")
         elseif shape.parent.boxType == 3 then
             table.insert(options,"UP")
+        elseif shape.parent.boxType == 7 then
+            table.insert(options,"UPPUNCH")
         end
         if shape.parent.color == self.color then
             table.insert(options,"PUNCH")
@@ -339,6 +341,10 @@ function p:react(options)
             self:jumpDown()
         elseif options[rand] == "PUNCH" then
             self:delay(delay)
+            self:punch()
+        elseif options[rand] == "UPPUNCH" then
+            self:jumpUp()
+            self:delay(0.1)
             self:punch()
         end
     end

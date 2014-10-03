@@ -42,13 +42,13 @@ end
 function l:draw()
     lg.setColor(255,255,255)
     
-    for i,v in ipairs(self.bgBlocks) do
+    --[[for i,v in ipairs(self.bgBlocks) do
         local gw = as.laneBG:getHeight()
         local gh = as.laneBG:getHeight()
         local sx = self.w/gw/3
         local sy = self.h/gh
         lg.draw(as.laneBG,v.x,v.y,0,sx,sy)
-    end
+    end]]
     
     if self.player.isControlled then
         local gw = as.laneOver:getHeight()
@@ -125,9 +125,11 @@ function l:spawnBlock()
         table.insert(spaces,space)
     end
     
-    local oType = math.random(1,5)
+    local oType = math.random(1,7)
     local pRand = math.random(1,3)
     local cRand = math.random(1,LANES)
+    
+    local cGap = BLOCK_SPEED
     
     if oType == 1 then
         --two obstacles at top, maybe a powerup
@@ -158,6 +160,17 @@ function l:spawnBlock()
         --one random powerup
         
         table.insert(self.powerups,powerup.new(spaces[pRand].x,spaces[pRand].y))
+    elseif oType == 6 then
+        --two obstacles at the bottom, maybe a powerup
+        --followed by the opposite side, same color
+        table.insert(self.blocks,block.new(spaces[3].x,spaces[3].y,cRand,3))
+        table.insert(self.blocks,block.new(spaces[2].x,spaces[2].y,cRand,3))
+        table.insert(self.blocks,block.new(spaces[1].x+cGap,spaces[1].y,cRand,1))
+        table.insert(self.blocks,block.new(spaces[2].x+cGap,spaces[2].y,cRand,1))
+    elseif oType == 7 then
+        --double length obstacle
+        table.insert(self.blocks,block.new(spaces[2].x,spaces[2].y,cRand,7))
+        table.insert(self.blocks,block.new(spaces[2].x+48,spaces[2].y,cRand,7))
     end
 
 end

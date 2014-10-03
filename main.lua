@@ -95,7 +95,9 @@ function love.update(dt)
             calmBeforeStorm = baseCalm + stormFactor
         end
     
-        BLOCK_SPEED = BLOCK_SPEED + stormFactor * dt
+        if BLOCK_SPEED < MAX_BLOCK_SPEED then
+            BLOCK_SPEED = BLOCK_SPEED + stormFactor * dt
+        end
     
         updateAnims(dt)
     end

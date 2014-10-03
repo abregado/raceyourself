@@ -27,7 +27,7 @@ AI_DELAYMAX = 67
 
 DEATH_TIME = 5
 PUNCH_TIME = 0.5
-STUN_TIME = 1.5
+STUN_TIME = 0.5
 
 PUNCH_DIST = 0.175
 
@@ -70,8 +70,9 @@ cont.restart = "r"
 screen = {w=lg.getWidth(),h=lg.getHeight()}
 laneGFX = {w=screen.w,h=screen.h/LANES}
 
-START_BLOCK_SPEED = laneGFX.w / 3
-BLOCK_SPEED = laneGFX.w / 3
+START_BLOCK_SPEED = laneGFX.w /1.5
+BLOCK_SPEED = laneGFX.w
+MAX_BLOCK_SPEED = laneGFX.w *1.5
 
 VIEWCONE = {w=playerSize*3,h=screen.h/LANES*.9}
 gfx = {}
