@@ -235,6 +235,8 @@ function level.selectNewPlayer(override)
         
         level.activePlayer = newPlayer
         newPlayer.isControlled = true
+        newPlayer.isActive = false
+        newPlayer.timers.deactive.val = 2
     end
 end
 

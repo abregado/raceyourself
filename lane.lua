@@ -111,7 +111,7 @@ function l:update(dt)
     self:removePowerups()
     
     --for testing, add a block when there are none
-    if #self.blocks==0 and #self.powerups ==0 then
+    if #self.blocks==0 and #self.powerups ==0 and self.player.isActive then
         self:spawnBlock()
     end
     
