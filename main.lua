@@ -118,7 +118,7 @@ function level.buildLanes()
     
     for i,v in ipairs(level.lanes) do
         table.insert(level.players,player.new(v,i))
-        level.selectNewPlayer(2)
+        level.selectNewPlayer(math.ceil(LANES/2))
     end
     
 end
@@ -237,6 +237,7 @@ function level.selectNewPlayer(override)
         newPlayer.isControlled = true
         newPlayer.isActive = false
         newPlayer.timers.deactive.val = 2
+        newPlayer.lane:clearLane()
     end
 end
 

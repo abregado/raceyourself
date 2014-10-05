@@ -72,9 +72,9 @@ laneGFX = {w=screen.w,h=screen.h/LANES}
 
 START_BLOCK_SPEED = laneGFX.w /1.5
 BLOCK_SPEED = laneGFX.w
-MAX_BLOCK_SPEED = laneGFX.w *1.5
+MAX_BLOCK_SPEED = laneGFX.w*1.3
 
-VIEWCONE = {w=playerSize*3,h=screen.h/LANES*.9}
+VIEWCONE = {w=playerSize*5,h=screen.h/LANES*.9}
 gfx = {}
 
 level={}
@@ -128,6 +128,10 @@ as.eShip[1] = lg.newImage('assets/renemy.png')
 as.eShip[2] = lg.newImage('assets/genemy.png')
 as.eShip[3] = lg.newImage('assets/benemy.png')
 as.pup = lg.newImage('assets/powerup.png')
+as.asteroid = {}
+as.asteroid[1] = lg.newImage('assets/a1.png')
+as.asteroid[2] = lg.newImage('assets/a2.png')
+as.asteroid[3] = lg.newImage('assets/a3.png')
 
 
 -- sounds globals
