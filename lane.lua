@@ -16,7 +16,7 @@ function l.new(pos)
     o.blocks = {}
     o.powerups = {}
     o.player = nil
-    o.streamColor = 2
+    o.streamColor = 0
     o.blocksAtThisColor = 0
     o.minBlocksAtThisColor = math.random(10,30)
 

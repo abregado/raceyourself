@@ -73,6 +73,10 @@ laneGFX = {w=screen.w,h=screen.h/LANES}
 START_BLOCK_SPEED = laneGFX.w /1.5
 BLOCK_SPEED = laneGFX.w
 MAX_BLOCK_SPEED = laneGFX.w*1.3
+if love.system.getOS() == "Android" then
+    MAX_BLOCK_SPEED = laneGFX.w
+end
+
 
 VIEWCONE = {w=playerSize*5,h=screen.h/LANES*.9}
 gfx = {}
