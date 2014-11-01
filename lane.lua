@@ -18,7 +18,7 @@ function l.new(pos)
     o.player = nil
     o.streamColor = 0
     o.blocksAtThisColor = 0
-    o.minBlocksAtThisColor = math.random(10,30)
+    o.minBlocksAtThisColor = math.random(5,10)
 
     l.setupMethods(o)
     

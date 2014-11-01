@@ -4,6 +4,7 @@ function s.new()
     o = {}
 
     o.font = lg.newFont()
+    o.highfont = lg.newFont(30)
     o.bigFont = lg.newFont(100)
 
     o.lLine = "SPACELIVES"
@@ -45,9 +46,13 @@ function s.setupMethods(o)
     o.draw = s.draw
     o.reset = s.reset
     o.collectPowerup = s.collectPowerup
+    o.storeScore = s.storeScore
     o.incrementKills = s.incrementKills
+    o.getHighScore = s.getHighScore
     o.decrementLives = s.decrementLives
+    o.getScore = s.getScore
     o.isGameOver = s.isGameOver
+    o.timeIncrease = s.timeIncrease
 end
 
 function s:draw()
@@ -81,17 +86,59 @@ function s:draw()
     end
 
     if self.gameOver then
-        lg.print(self.resetMsg, (lw.getWidth() - self.resetMsgWidth) / 2, (lw.getHeight() + self.bigFontHeight * 1.2) / 2)
+        local highScoreText = " "
+        if self:getScore() > self:getHighScore() then
+            highScoreText = "NEW HIGH SCORE!" .. self.getHighScore()
+        else
+            highScoreText = "Current High Score: "..self.getHighScore()
+        end
+        local y1 = (lw.getHeight() + self.bigFontHeight * 1.2) / 2
+        local x1 = (lw.getWidth() - self.resetMsgWidth) / 2
+        local x2 = (lw.getWidth() - self.gameOverMsgWidth) / 2
+        local y2 = (lw.getHeight() - self.bigFontHeight) / 2
+        local x3 = (lw.getWidth() - self.highfont:getWidth(highScoreText)) / 2
+        local y3 = (lw.getHeight() - self.bigFontHeight * 2) / 2
+        lg.print(self.resetMsg, x1, y1)
         lg.setFont(self.bigFont)
-        lg.print(self.gameOverMsg, (lw.getWidth() - self.gameOverMsgWidth) / 2, (lw.getHeight() - self.bigFontHeight) / 2)
+        lg.print(self.gameOverMsg, x2, y2)
+        if self:getScore() > self:getHighScore() then
+            lg.setColor(255,125,125)
+        end
+        lg.setFont(self.highfont)
+        lg.print(highScoreText,x3,y3)
+            
     end
 end
 
 function s:reset()
     self.powerups = 0
     self.kills = 0
+    self.time = 0
     self.gameOver = false
     self.lives = START_LIVES
+end
+
+function s:storeScore()
+    newScoreObject = {}
+    newScoreObject.powerups = tonumber(self.powerups)
+    newScoreObject.kills = tonumber(self.kills)
+    newScoreObject.time = tonumber(self.time)
+    newScoreObject.score = tonumber((self.powerups*coinScore) + (self.kills*killScore) + (self.time*timeScore))
+    table.insert(scoreboard,newScoreObject)
+    
+end
+
+function s:getScore()
+    return math.floor(self.powerups*coinScore) + (self.kills*killScore) + (self.time*timeScore)
+end
+
+function s:getHighScore()
+    result = {}
+    for i,v in ipairs(scoreboard) do table.insert(result, v.score) end
+    table.sort(result,function (a,b)
+      return (a > b)
+    end)
+    return result[1] or 0
 end
 
 function s:collectPowerup()
@@ -107,6 +154,11 @@ function s:decrementLives()
     if self.lives == 0 then
         self.gameOver = true
     end
+end
+
+function s:timeIncrease(dt)
+    self.time = self.time +dt
+    
 end
 
 function s:isGameOver()

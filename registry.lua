@@ -1,3 +1,10 @@
+--global declarations
+la = love.audio
+lg = love.graphics
+lm = love.mouse
+lw = love.window
+fs = love.filesystem
+
 --requires
 lane = require('lane')
 block = require('block')
@@ -12,13 +19,22 @@ vl = require ('hump-master/vector-light')
 shapes = require ('HardonCollider.shapes')
 tween = require ('tween')
 an = require ('anim8/anim8')
+dataControl = require('dataControl')
+gs = require('hump-master/gamestate')
+list = require('buttonlist')
+button = require('button')
+require('serialize')
 
 
---global declarations
-la = love.audio
-lg = love.graphics
-lm = love.mouse
-lw = love.window
+fonts = {}
+fonts[1] = lg.newFont()
+lg.setFont(fonts[1])
+
+scoreboard = {}
+timeScore = 20
+killScore = 500
+coinScore = 100
+rawData = {}
 
 DEBUG_MODE = false
 
@@ -43,7 +59,7 @@ ROTSPEED=10
 ANDROID_INSTRUCTIONS = "Swipe up and down to dodge, Swipe forward to attack. Tap a lane to swap with your wingman"
 DESKTOP_INSTRUCTIONS = "Press UP and DOWN to dodge, Press RIGHT to attack. Press W and S to swap places with a your wingmen"
 ANDROID_RESTART = "Tap to restart"
-DESKTOP_RESTART = "Press R to restart"
+DESKTOP_RESTART = "Press R to restart, or escape to return to the menu"
 START_LIVES = 5
 
 --player globals
@@ -77,16 +93,16 @@ if love.system.getOS() == "Android" then
     MAX_BLOCK_SPEED = laneGFX.w
 end
 
+--gamestates
+state={}
+state.menu = require('state_menu')
+state.game = require('state_game')
+state.score = require('state_score')
 
 VIEWCONE = {w=playerSize*5,h=screen.h/LANES*.9}
 gfx = {}
 
-level={}
-level.lanes={}
-level.players={}
-level.effects={}
-level.activePlayer = nil
-level.collider = HC.new()
+level = require 'level'
     
 
 color = {}
