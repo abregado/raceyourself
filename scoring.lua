@@ -53,6 +53,8 @@ function s.setupMethods(o)
     o.getScore = s.getScore
     o.isGameOver = s.isGameOver
     o.timeIncrease = s.timeIncrease
+    o.getBestAverage = s.getBestAverage
+    o.getGamesPlayed = s.getGamesPlayed
 end
 
 function s:draw()
@@ -139,6 +141,28 @@ function s:getHighScore()
       return (a > b)
     end)
     return result[1] or 0
+end
+
+function s:getBestAverage()
+    result = {}
+    for i,v in ipairs(scoreboard) do table.insert(result, v.score) end
+    table.sort(result,function (a,b)
+      return (a > b)
+    end)
+    
+    if #result == 0 then
+        return 0
+    elseif #result == 1 then
+        return math.floor(result[1])
+    elseif #result == 2 then
+        return math.floor((result[1]+result[2])/2)
+    else
+        return math.floor((result[1]+result[2]+result[3])/3)
+    end
+end
+
+function s:getGamesPlayed()
+    return math.floor(#scoreboard)
 end
 
 function s:collectPowerup()

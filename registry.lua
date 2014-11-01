@@ -32,8 +32,8 @@ lg.setFont(fonts[1])
 
 scoreboard = {}
 timeScore = 20
-killScore = 500
-coinScore = 100
+killScore = 100
+coinScore = 300
 rawData = {}
 
 DEBUG_MODE = false
