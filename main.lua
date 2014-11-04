@@ -1,4 +1,6 @@
+require ('lovedebug')
 require('registry')
+
 
 function love.load()
     buildAnimations()
@@ -10,6 +12,7 @@ function love.load()
 	gs.registerEvents()
     dataControl.load()
 	gs.switch(state.menu)
+    print("test string printed to console")
 end
 
 function buildAnimations()
