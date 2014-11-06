@@ -90,9 +90,9 @@ function s:draw()
     if self.gameOver then
         local highScoreText = " "
         if self:getScore() > self:getHighScore() then
-            highScoreText = "NEW HIGH SCORE!" .. self.getScore()
+            highScoreText = "NEW HIGH SCORE!" .. self:getScore()
         else
-            highScoreText = "Current High Score: "..self.getHighScore()
+            highScoreText = "Current High Score: "..self:getHighScore()
         end
         local y1 = (lw.getHeight() + self.bigFontHeight * 1.2) / 2
         local x1 = (lw.getWidth() - self.resetMsgWidth) / 2
@@ -114,6 +114,7 @@ end
 
 function s:reset()
     self.powerups = 0
+    self.kills = 0
     self.kills = 0
     self.time = 0
     self.gameOver = false
