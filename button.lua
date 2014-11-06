@@ -50,8 +50,9 @@ function button:draw()
 	lg.setColor(self.colors.bg)
     lg.rectangle("fill",self.x,self.y,self.w,self.h)
     
-    if self:check() then
-		if lm.isDown("l") then
+    local osString = love.system.getOS()
+    if self:check() and osString ~= "Android" then
+        if lm.isDown("l") then
 		lg.setColor(self.colors.clicked)
 		else
 		lg.setColor(self.colors.hover)

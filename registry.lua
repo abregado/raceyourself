@@ -114,6 +114,7 @@ color.respawn = {255,255,255,80}
 color.render = {255,255,255,255}
 color.controlled = {255,255,255}
 color.contOverlay = {255,0,0}
+color.menuBG = {47,199,193}
 color.block={}
 color.block[1] = {255,0,0}
 color.block[2] = {0,255,0}
@@ -152,6 +153,7 @@ as.asteroid = {}
 as.asteroid[1] = lg.newImage('assets/a1.png')
 as.asteroid[2] = lg.newImage('assets/a2.png')
 as.asteroid[3] = lg.newImage('assets/a3.png')
+as.title = lg.newImage('assets/title.png')
 
 
 -- sounds globals

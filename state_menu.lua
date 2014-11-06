@@ -8,6 +8,8 @@ pos.x = screen.w/4
 pos.y = screen.h/4
 
 function menu:init()
+    menu.titleScale = screen.w/as.title:getWidth()
+    pos.y = as.title:getHeight()*menu.titleScale*1.1
     self.mlist = list.new(pos.x,pos.y,3,self)
     self.mlist.buttons[1].label = "Start Game"
     self.mlist.buttons[1].click = function() gs.switch(state.game) end
@@ -16,13 +18,18 @@ function menu:init()
     self.mlist.buttons[3].label = "Quit"
     self.mlist.buttons[3].click = function() love.event.quit() end
     menu.clicked = false
+    
+    
 end
 
 function menu:enter(from)
     menu.clicked = false
+    lg.setBackgroundColor(color.menuBG)
 end
 
 function menu:draw()
+    lg.setColor(255,255,255)
+    lg.draw(as.title,0,0,0,menu.titleScale)
 	self.mlist:draw()
 end
 

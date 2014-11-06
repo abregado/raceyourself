@@ -45,6 +45,7 @@ function game:enter(from)
         sfx.theme[currentTheme]:rewind()
         sfx.theme[currentTheme]:play()
     end
+    lg.setBackgroundColor(15,15,15)
 end
 
 function game:leave()
@@ -102,6 +103,11 @@ function game:mousereleased(x, y, button)
         if not touchMoved then
             -- tap detected
             tc.tap(x, y)
+            if score:isGameOver() then
+                score:storeScore()
+                game.restart()
+            end
+                
         elseif not score:isGameOver() then
             local dx = lm.getX() - origTouchX
             local dy = lm.getY() - origTouchY
