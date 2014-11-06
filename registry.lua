@@ -168,6 +168,7 @@ sfx.switch = la.newSource("assets/SFX/switch.ogg", "static")
 sfx.theme = {}
 --sfx.theme[1] = la.newSource("assets/music/theme1.mp3")
 sfx.theme[2] = la.newSource("assets/music/theme2.mp3")
+sfx.theme[2]:setVolume(0.25)
 --sfx.theme[3] = la.newSource("assets/music/theme3.mp3")
 
 currentTheme = 2

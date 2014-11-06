@@ -1,7 +1,7 @@
 dataControl = {}
 
 --savefile should be in the registry
-saveFile,fileError = fs.newFile("data.txt")
+saveFile,fileError = fs.newFile("data81.txt")
 
 function dataControl.draw()
     if DEBUG_MODE then

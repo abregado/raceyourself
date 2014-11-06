@@ -8,8 +8,8 @@ function s.new()
     o.bigFont = lg.newFont(100)
 
     o.lLine = "SPACELIVES"
-    o.pLine = "SPACECOINS"
-    o.kLine = "SPACEKILLS"
+    o.pLine = "SPACECOINS/KILLS"
+    o.kLine = "SPACESCORE"
     o.lWidth = o.font:getWidth(o.lLine)
     o.pWidth = o.font:getWidth(o.pLine)
     o.kWidth = o.font:getWidth(o.kLine)
@@ -65,17 +65,19 @@ function s:draw()
     lg.line(self.microX, self.midY, self.maxX, self.midY)
     lg.line(self.midX, self.minY, self.midX, self.maxY)
     lg.line(self.minX, self.minY, self.minX, self.maxY)
-
+    
+    local killCoinStr = self.powerups.." / "..self.kills
+    
     local lW = self.font:getWidth(self.lives)
-    local pW = self.font:getWidth(self.powerups)
-    local kW = self.font:getWidth(self.kills)
+    local pW = self.font:getWidth(killCoinStr)
+    local kW = self.font:getWidth(self:getScore())
 
     lg.print(self.lLine, self.microX + self.lWidth * 0.1, self.minY + self.fontHeight * 0.2)
     lg.print(self.lives, self.microX + (self.lWidth * 1.2 - lW) / 2, self.maxY - self.fontHeight * 1.2)
     lg.print(self.pLine, self.minX + self.pWidth * 0.1, self.minY + self.fontHeight * 0.2)
-    lg.print(self.powerups, self.minX + (self.pWidth * 1.2 - pW) / 2, self.maxY - self.fontHeight * 1.2)
+    lg.print(killCoinStr, self.minX + (self.pWidth * 1.2 - pW) / 2, self.maxY - self.fontHeight * 1.2)
     lg.print(self.kLine, self.midX + self.kWidth * 0.1, self.minY + self.fontHeight * 0.2)
-    lg.print(self.kills, self.midX + (self.kWidth * 1.2 - kW) / 2, self.maxY - self.fontHeight * 1.2)
+    lg.print(self:getScore(), self.midX + (self.kWidth * 1.2 - kW) / 2, self.maxY - self.fontHeight * 1.2)
     
     if love.system.getOS() == "Android" then
         local xo = self.font:getWidth(ANDROID_INSTRUCTIONS)/2
@@ -90,9 +92,9 @@ function s:draw()
     if self.gameOver then
         local highScoreText = " "
         if self:getScore() > self:getHighScore() then
-            highScoreText = "NEW HIGH SCORE!" .. self:getScore()
+            highScoreText = "NEW HIGH SCORE!  " .. self:getScore()
         else
-            highScoreText = "Current High Score: "..self:getHighScore()
+            highScoreText = "Current High Score:  "..self:getHighScore()
         end
         local y1 = (lw.getHeight() + self.bigFontHeight * 1.2) / 2
         local x1 = (lw.getWidth() - self.resetMsgWidth) / 2
@@ -132,7 +134,7 @@ function s:storeScore()
 end
 
 function s:getScore()
-    return math.floor(self.powerups*coinScore) + (self.kills*killScore) + (self.time*timeScore)
+    return math.floor((self.powerups*coinScore) + (self.kills*killScore) + (self.time*timeScore))
 end
 
 function s:getHighScore()
@@ -178,8 +180,9 @@ function s:decrementLives()
 end
 
 function s:timeIncrease(dt)
-    self.time = self.time +dt
-    
+    if not self.gameOver then
+        self.time = self.time +dt
+    end
 end
 
 function s:isGameOver()
