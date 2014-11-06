@@ -90,7 +90,7 @@ function s:draw()
     if self.gameOver then
         local highScoreText = " "
         if self:getScore() > self:getHighScore() then
-            highScoreText = "NEW HIGH SCORE!" .. self.getHighScore()
+            highScoreText = "NEW HIGH SCORE!" .. self.getScore()
         else
             highScoreText = "Current High Score: "..self.getHighScore()
         end
@@ -150,14 +150,10 @@ function s:getBestAverage()
       return (a > b)
     end)
     
-    if #result == 0 then
-        return 0
-    elseif #result == 1 then
-        return math.floor(result[1])
-    elseif #result == 2 then
-        return math.floor((result[1]+result[2])/2)
-    else
+    if #result > 2 then
         return math.floor((result[1]+result[2]+result[3])/3)
+    else
+        return false
     end
 end
 

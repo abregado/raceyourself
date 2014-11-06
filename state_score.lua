@@ -22,10 +22,14 @@ function sboard:enter(from)
     sboard.clicked = false
     
     sboard.texts[1] = "Current High Score"
-    sboard.texts[2] = tostring(score:getHighScore())
+    sboard.texts[2] = tostring(math.floor(score:getHighScore()))
     sboard.texts[3] = " "
     sboard.texts[4] = "Average of Top Three Scores"
-    sboard.texts[5] = tostring(score:getBestAverage())
+    if score:getBestAverage() then
+        sboard.texts[5] = tostring(math.floor(score:getBestAverage()))
+    else
+        sboard.texts[5] = "play three games to get your average"
+    end
     sboard.texts[6] = " "
     sboard.texts[7] = "Total Games Played"
     sboard.texts[8] = tostring(score:getGamesPlayed())
