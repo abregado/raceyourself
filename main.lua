@@ -1,6 +1,7 @@
-require ('lovedebug')
 require('registry')
-
+if DEBUG_MODE then
+    require ('lovedebug')
+end
 
 function love.load()
     buildAnimations()

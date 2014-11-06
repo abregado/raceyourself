@@ -99,14 +99,15 @@ end
 -- equiv to onTouchEnded
 function game:mousereleased(x, y, button)
     touch = false
+    if score:isGameOver() then
+        score:storeScore()
+        game.restart()
+    end
     if button == touchButton then
         if not touchMoved then
             -- tap detected
             tc.tap(x, y)
-            if score:isGameOver() then
-                score:storeScore()
-                game.restart()
-            end
+            
                 
         elseif not score:isGameOver() then
             local dx = lm.getX() - origTouchX
