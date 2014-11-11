@@ -1,6 +1,6 @@
 local b = {}
 
-function b.new(x,y,color,boxType)
+function b.new(x,y,color,boxType,ship)
     o={}
     
     o.x= x
@@ -13,6 +13,15 @@ function b.new(x,y,color,boxType)
     o.isBlock = true
     o.color = color
     o.rot = 0
+    local r = 0
+    if not ship then
+        r = math.random(1,5)
+    end
+    if r == 1 then
+        o.color = LANES+1
+    end
+    o.ast = math.random(1,3)
+    
     
     o.boxType = boxType
     
@@ -42,7 +51,7 @@ function b:move(dt)
     end
     
     self.cob:moveTo(self.x,self.y)
-    self.rot = self.rot+dt*ROTSPEED
+    --self.rot = self.rot+dt*ROTSPEED
 end
 
 function b:draw()
@@ -55,8 +64,14 @@ function b:draw()
 end
 
 function b:drawSprite()
+    local sp
+    if self.color > LANES then
+        sp = as.asteroid[self.ast]
+    else
+        sp = as.eShip[self.color]
+    end
+    
     lg.setColor(color.render)
-    local sp = as.eShip[self.color]
     local gw = sp:getWidth()
     local gh = sp:getHeight()
     local sx = BLOCKSIZE/gw*1.8

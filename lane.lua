@@ -16,6 +16,9 @@ function l.new(pos)
     o.blocks = {}
     o.powerups = {}
     o.player = nil
+    o.streamColor = 0
+    o.blocksAtThisColor = 0
+    o.minBlocksAtThisColor = math.random(5,10)
 
     l.setupMethods(o)
     
@@ -35,6 +38,7 @@ function l.setupMethods(o)
     o.withinBounds = l.withinBounds
     o.drawBlocks = l.drawBlocks
     o.drawPowerups = l.drawPowerups
+    o.clearLane = l.clearLane
     
     return o
 end 
@@ -59,6 +63,20 @@ function l:draw()
         lg.setBlendMode('additive')
         lg.draw(as.laneOver,self.x,self.y,0,sx,sy)
         lg.setBlendMode('alpha')
+    end
+    
+    
+    local mid = self.y+(self.h/2)
+    
+    if self.streamColor > 0 then
+        lg.setColor(COLORS[self.streamColor])
+        lg.setLineWidth(1)
+        lg.line(0,mid+2,screen.w,mid+2)
+        lg.line(0,mid-2,screen.w,mid-2)
+    else
+        lg.setColor(255,255,255)
+        lg.setLineWidth(1)
+        lg.line(0,mid,screen.w,mid)
     end
     
     
@@ -111,7 +129,7 @@ function l:update(dt)
     self:removePowerups()
     
     --for testing, add a block when there are none
-    if #self.blocks==0 and #self.powerups ==0 then
+    if #self.blocks==0 and #self.powerups ==0 and self.player.isActive then
         self:spawnBlock()
     end
     
@@ -125,53 +143,74 @@ function l:spawnBlock()
         table.insert(spaces,space)
     end
     
-    local oType = math.random(1,7)
+    local oType = math.random(1,8)
     local pRand = math.random(1,3)
     local cRand = math.random(1,LANES)
+    local ship = true
+    if self.streamColor > 0 then
+        ship = false
+    end
+    
+    if self.streamColor > 0 then
+        cRand = self.streamColor
+    end
     
     local cGap = BLOCK_SPEED
     
     if oType == 1 then
         --two obstacles at top, maybe a powerup
-        table.insert(self.blocks,block.new(spaces[1].x,spaces[1].y,cRand,oType))
-        table.insert(self.blocks,block.new(spaces[2].x,spaces[2].y,cRand,oType))
+        table.insert(self.blocks,block.new(spaces[1].x,spaces[1].y,cRand,oType,ship))
+        table.insert(self.blocks,block.new(spaces[2].x,spaces[2].y,cRand,oType,ship))
         if pRand == 3 then
-            table.insert(self.powerups,powerup.new(spaces[3].x,spaces[3].y))
+            --table.insert(self.powerups,powerup.new(spaces[3].x,spaces[3].y))
+            self:spawnPowerup(powerup.new(spaces[3].x,spaces[3].y))
         end
     elseif oType == 2 then
         --one obstacle middle, maybe one powerup
-        table.insert(self.blocks,block.new(spaces[2].x,spaces[2].y,cRand,oType))
+        table.insert(self.blocks,block.new(spaces[2].x,spaces[2].y,cRand,oType,ship))
         if not pRand == 2 then
-            table.insert(self.powerups,powerup.new(spaces[pRand].x,spaces[pRand].y))
+            --table.insert(self.powerups,powerup.new(spaces[pRand].x,spaces[pRand].y))
+            self:spawnPowerup(powerup.new(spaces[pRand].x,spaces[pRand].y))
         end
     elseif oType == 3 then
         --two obstacles at the bottom, maybe a powerup
-        table.insert(self.blocks,block.new(spaces[3].x,spaces[3].y,cRand,oType))
-        table.insert(self.blocks,block.new(spaces[2].x,spaces[2].y,cRand,oType))
+        table.insert(self.blocks,block.new(spaces[3].x,spaces[3].y,cRand,oType,ship))
+        table.insert(self.blocks,block.new(spaces[2].x,spaces[2].y,cRand,oType,ship))
         if pRand == 1 then
-            table.insert(self.powerups,powerup.new(spaces[1].x,spaces[1].y))
+            --table.insert(self.powerups,powerup.new(spaces[1].x,spaces[1].y))
+            self:spawnPowerup(powerup.new(spaces[1].x,spaces[1].y))
         end
     elseif oType == 4 then
         --three powerups
-        table.insert(self.powerups,powerup.new(spaces[1].x,spaces[1].y))
-        table.insert(self.powerups,powerup.new(spaces[2].x,spaces[2].y))
-        table.insert(self.powerups,powerup.new(spaces[3].x,spaces[3].y))
+        self:spawnPowerup(powerup.new(spaces[1].x,spaces[1].y))
+        self:spawnPowerup(powerup.new(spaces[2].x,spaces[2].y))
+        self:spawnPowerup(powerup.new(spaces[3].x,spaces[3].y))
+        --table.insert(self.powerups,powerup.new(spaces[1].x,spaces[1].y))
+        --table.insert(self.powerups,powerup.new(spaces[2].x,spaces[2].y))
+        --table.insert(self.powerups,powerup.new(spaces[3].x,spaces[3].y))
     elseif oType == 5 then
         --one random powerup
         
-        table.insert(self.powerups,powerup.new(spaces[pRand].x,spaces[pRand].y))
+        --table.insert(self.powerups,powerup.new(spaces[pRand].x,spaces[pRand].y))
+        self:spawnPowerup(powerup.new(spaces[pRand].x,spaces[pRand].y))
     elseif oType == 6 then
         --two obstacles at the bottom, maybe a powerup
         --followed by the opposite side, same color
-        table.insert(self.blocks,block.new(spaces[3].x,spaces[3].y,cRand,3))
-        table.insert(self.blocks,block.new(spaces[2].x,spaces[2].y,cRand,3))
-        table.insert(self.blocks,block.new(spaces[1].x+cGap,spaces[1].y,cRand,1))
-        table.insert(self.blocks,block.new(spaces[2].x+cGap,spaces[2].y,cRand,1))
+        table.insert(self.blocks,block.new(spaces[3].x,spaces[3].y,cRand,3,ship))
+        table.insert(self.blocks,block.new(spaces[2].x,spaces[2].y,cRand,3,ship))
+        table.insert(self.blocks,block.new(spaces[1].x+cGap,spaces[1].y,cRand,1,ship))
+        table.insert(self.blocks,block.new(spaces[2].x+cGap,spaces[2].y,cRand,1,ship))
     elseif oType == 7 then
         --double length obstacle
-        table.insert(self.blocks,block.new(spaces[2].x,spaces[2].y,cRand,7))
-        table.insert(self.blocks,block.new(spaces[2].x+48,spaces[2].y,cRand,7))
+        table.insert(self.blocks,block.new(spaces[2].x,spaces[2].y,cRand,7,ship))
+        table.insert(self.blocks,block.new(spaces[2].x+48,spaces[2].y,cRand,7,ship))
+    elseif oType == 8 and self.blocksAtThisColor > self.minBlocksAtThisColor then
+        self.streamColor = math.random(0,LANES)
+        self.blocksAtThisColor = 0
+        self.minBlocksAtThisColor = math.random(5,30)
     end
+    
+    self.blocksAtThisColor = self.blocksAtThisColor+1
 
 end
 
@@ -189,8 +228,18 @@ function l:removeBlocks(all)
 end
 
 function l:spawnPowerup(b)
-    local pup = powerup.new(self, b)
-    table.insert(self.powerups,pup)
+    if self.player.color == self.streamColor then
+        table.insert(self.powerups,b)
+    end
+end
+
+function l:clearLane()
+    for i,v in ipairs(self.powerups) do
+        v.isGarbage=true
+    end
+    for i,v in ipairs(self.blocks) do
+        v.isGarbage=true
+    end
 end
 
 function l:removePowerups(all)

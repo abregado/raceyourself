@@ -334,13 +334,13 @@ function p:react(options)
         local reaction = nil 
         local rand = math.random(1,#options)
         if options[rand] == "UP" then
-            self:delay(delay)
+            --self:delay(delay)
             self:jumpUp()
         elseif options[rand] == "DOWN" then
-            self:delay(delay)
+            --self:delay(delay)
             self:jumpDown()
         elseif options[rand] == "PUNCH" then
-            self:delay(delay)
+            --self:delay(delay)
             self:punch()
         elseif options[rand] == "UPPUNCH" then
             self:jumpUp()
